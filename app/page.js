@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Details } from "./components/Details";
+import { GradientText } from "./components/GradientText";
+import { Title } from "./components/Title";
+import { Button } from "./components/Button";
 
 const sufficiencyThreshold = 0.005;
 const maxProbThreshold = 0.65;
@@ -96,7 +100,7 @@ const FAQ = () => {
         `This tool can support patients and case workers who want to make an
         informed decision about appealing an inappropriate health insurance
         denial. Many patients forgo appeals assuming they have little to no
-        chance of success. This is actually <a style="color: #FB7185; text-decoration: underline;" href=https://blog.persius.org/investigations/claims_denials>far from true</a>. `,
+        chance of success. This is actually <a style="color: #6F495C; text-decoration: underline;" href=https://blog.persius.org/investigations/claims_denials>far from true</a>. `,
         `If you have a denial and are considering forgoing an appeal, you should
         know that seeking the advice of a professional is your best option. If
         that is not an option accessible to you, another good option is to just
@@ -176,15 +180,15 @@ const FAQ = () => {
       answer: [
         `There are many resources that can help you understand how to appeal a denial. Typically the process involves access to
         an appeal process that your insurer administers, and a subsequent one that an independent review entity administers.
-        As a starting point, you can take a look at <a style="color: #FB7185; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>this primer</a>.`,
-        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #FB7185; text-decoration: underline;">info@persius.org</a>.`,
+        As a starting point, you can take a look at <a style="color: #6F495C; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>this primer</a>.`,
+        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>.`,
       ],
     },
     {
       question: `Why was this created?
       `,
       answer: [
-        `<a href="https://persius.org" style="color: #FB7185; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
+        `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
         inappropriate health insurance coverage denials, and provides human
         support in such cases for free. In helping to resolve over $275,000 In
         inappropriate denials at zero cost since our formation, we've learned a thing or two about
@@ -264,7 +268,9 @@ export default function Home() {
   const introFlow = [
     {
       id: "question1",
-      text: "Have you had a pre-authorization request or claim for coverage denied?",
+      text: [
+        "Have you had a pre-authorization request or claim for coverage denied?",
+      ],
       responses: [
         { answer: "Yes", next: "question2" },
         { answer: "No", next: "message1" },
@@ -272,13 +278,16 @@ export default function Home() {
     },
     {
       id: "message1",
-      message:
+      message: [
         "This tool is meant to support those facing coverage denials. Please see the FAQ for more info.",
+      ],
       next: "questionsComplete",
     },
     {
       id: "question2",
-      text: "Is attaining coverage critical to your physical or financial wellbeing?",
+      text: [
+        "Is attaining coverage critical to your physical or financial well being?",
+      ],
       responses: [
         {
           answer: "Yes",
@@ -289,17 +298,24 @@ export default function Home() {
     },
     {
       id: "message2",
-      message: `You should seek the support of human experts, and consider filing an
-          appeal of the decision. We suggest you do not use our automated tool to make any
-          decisions, as it is an imperfect AI model and in your specific case the risk of harm from bad model outputs outweighs the potential benefits. If you need help navigating
-          next steps, reach out to us at info@persius.org`,
+      message: [
+        `You should seek human support, and consider filing an
+          appeal.`,
+        `We suggest you do <b>not</b> use our automated tool to make any
+          decisions, as it is an imperfect AI model and in your situation the risk of harm from bad model outputs outweighs the potential benefits.`,
+        `If you need help with next steps, 
+          reach out to us at <a href="info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>. We help people with coverage denials for free.`,
+      ],
       next: "questionsComplete",
     },
     {
       id: "statement3",
-      text: `You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general
-      advice is to appeal if you have the time and resources, as appeals are often overturned. If you are considering forgoing an appeal because you
+      text: [
+        `You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general
+      advice is to appeal if you have the time and resources, as appeals are often overturned.`,
+        `If you are considering forgoing an appeal because you
       believe it is unlikely to be successful, use our model to update that belief.`,
+      ],
       responses: [
         {
           answer: "Ok",
@@ -364,17 +380,21 @@ export default function Home() {
     if (currentStep.text) {
       return (
         <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
-          <p className="text-lg font-medium text-gray-700 mb-4">
-            {currentStep.text}
-          </p>
-          {currentStep.responses.map((response, index) => (
-            <button
+          {currentStep.text.map((text, index) => (
+            <Details
               key={index}
-              className={`mx-2 bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition duration-200`}
+              className="text-lg font-medium text-gray-600 mb-4"
+              dangerouslySetInnerHTML={{ __html: text }}
+            ></Details>
+          ))}
+          {currentStep.responses.map((response, index) => (
+            <Button
+              key={index}
+              className={`mx-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition duration-200`}
               onClick={() => handleResponse(response.next)}
             >
               {response.answer}
-            </button>
+            </Button>
           ))}
         </div>
       );
@@ -383,9 +403,16 @@ export default function Home() {
     if (currentStep.message) {
       return (
         <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
-          <p className="text-lg font-medium text-gray-700">
-            {currentStep.message}
-          </p>
+          {currentStep.message.map((message, index) => (
+            <p
+              key={index}
+              className="text-lg font-medium text-gray-700 mb-3"
+              dangerouslySetInnerHTML={{ __html: message }}
+            >
+              {/* {" "} */}
+              {/* {message}{" "} */}
+            </p>
+          ))}
         </div>
       );
     }
@@ -395,14 +422,16 @@ export default function Home() {
 
   return (
     <main className="flex flex-col items-center mt-24 mb-24 px-8">
-      <h1 className="text-5xl font-bold mb-8 text-slate-600 text-center">
-        Appeal Overturn Predictor
-      </h1>
-      <h3 className="text-lg mb-12 text-slate-400 text-center">
+      <Title size="md">
+        <GradientText className="from-slate-400 to-slate-600">
+          Appeal Overturn Predictor
+        </GradientText>
+      </Title>
+      <h3 className="text-lg mt-4 mb-8 text-light text-center">
         {" "}
         A{" "}
         <a
-          className="underline text-rose-400 hover:text-rose-500 transition duration-200"
+          className="underline text-primary-500 hover:text-primary-400 transition duration-200"
           href="https://persius.org"
         >
           Persius
@@ -413,14 +442,13 @@ export default function Home() {
       {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
         100% local. No text leaves your device.
       </h2> */}
-
       {introState !== "questionsComplete" && renderIntroFlow()}
 
       {introState === "questionsComplete" && (
-        <>
-          <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
+        <div className="text-center flex flex-col items-center">
+          {/* <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
             Enter A Description Of Your Denial Situation
-          </h2>
+          </h2> */}
 
           <select
             className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
@@ -442,11 +470,11 @@ export default function Home() {
               </option>
             ))}
           </select>
-          {/* TOOD: limit input chars, ensure tokenizer truncates. */}
+          {/* TODO: limit input chars, ensure tokenizer truncates. */}
           <textarea
             rows="8"
             className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
-            placeholder="Enter case description here"
+            placeholder="Enter a description of your coverage denial here..."
             maxLength="2000"
             value={input}
             onInput={(e) => {
@@ -454,7 +482,7 @@ export default function Home() {
               classify(e.target.value);
             }}
           />
-        </>
+        </div>
       )}
 
       {ready !== null && (
@@ -517,10 +545,10 @@ export default function Home() {
         an appeal based on this tool.
       </p>
       <footer>
-        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
           <a
             href="https://github.com/TPAFS/overturn-predictor"
-            style={{ color: "#FB7185", textDecoration: "underline" }}
+            style={{ textDecoration: "underline" }}
           >
             View Source on Github
           </a>
