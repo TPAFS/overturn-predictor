@@ -261,6 +261,54 @@ export default function Home() {
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
 
+  const introFlow = [
+    {
+      id: "question1",
+      text: "Have you had a pre-authorization request or claim for coverage denied?",
+      responses: [
+        { answer: "Yes", next: "question2" },
+        { answer: "No", next: "message1" },
+      ],
+    },
+    {
+      id: "message1",
+      message:
+        "This tool is meant to support those facing coverage denials. Please see the FAQ for more info.",
+      next: "questionsComplete",
+    },
+    {
+      id: "question2",
+      text: "Is attaining coverage critical to your physical or financial wellbeing?",
+      responses: [
+        {
+          answer: "Yes",
+          next: "message2",
+        },
+        { answer: "No", next: "statement3" },
+      ],
+    },
+    {
+      id: "message2",
+      message: `You should seek the support of human experts, and consider filing an
+          appeal of the decision. We suggest you do not use our automated tool to make any
+          decisions, as it is an imperfect AI model and in your specific case the risk of harm from bad model outputs outweighs the potential benefits. If you need help navigating
+          next steps, reach out to us at info@persius.org`,
+      next: "questionsComplete",
+    },
+    {
+      id: "statement3",
+      text: `You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general
+      advice is to appeal if you have the time and resources, as appeals are often overturned. If you are considering forgoing an appeal because you
+      believe it is unlikely to be successful, use our model to update that belief.`,
+      responses: [
+        {
+          answer: "Ok",
+          next: "questionsComplete",
+        },
+      ],
+    },
+  ];
+
   // Create a reference to the worker object.
   const worker = useRef(null);
 
@@ -302,61 +350,113 @@ export default function Home() {
     }
   }, []);
 
-  const [open, setOpen] = useState(null);
+  const [introState, setIntroState] = useState("question1");
+
+  const currentStep = introFlow.find((step) => step.id === introState);
+
+  const handleResponse = (nextState) => {
+    setIntroState(nextState);
+  };
+
+  const renderIntroFlow = () => {
+    if (!currentStep) return null;
+
+    if (currentStep.text) {
+      return (
+        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
+          <p className="text-lg font-medium text-gray-700 mb-4">
+            {currentStep.text}
+          </p>
+          {currentStep.responses.map((response, index) => (
+            <button
+              key={index}
+              className={`mx-2 bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition duration-200`}
+              onClick={() => handleResponse(response.next)}
+            >
+              {response.answer}
+            </button>
+          ))}
+        </div>
+      );
+    }
+
+    if (currentStep.message) {
+      return (
+        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
+          <p className="text-lg font-medium text-gray-700">
+            {currentStep.message}
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <main className="flex flex-col items-center mt-16 mb-16">
-      <h1 className="flex-auto text-5xl font-bold mb-3 text-slate-400 text-center ">
+    <main className="flex flex-col items-center mt-24 mb-24 px-8">
+      <h1 className="text-5xl font-bold mb-8 text-slate-600 text-center">
         Appeal Overturn Predictor
       </h1>
-      <h3 className="flex-auto text-md mb-4 text-slate-300 text-center">
+      <h3 className="text-lg mb-12 text-slate-400 text-center">
         {" "}
         A{" "}
-        <a className="underline text-rose-400" href="https://persius.org">
+        <a
+          className="underline text-rose-400 hover:text-rose-500 transition duration-200"
+          href="https://persius.org"
+        >
           Persius
         </a>{" "}
         product.
       </h3>
-      <h2 className="flex-auto w-[85vw] text-2xl mt-8 mb-8 font-bold text-slate-500 text-center">
-        AI For Patients Facing <br /> Health Insurance Denials
-      </h2>
-      <img src="logo.jpeg" width="300px" height="300px" className="mb-6"></img>
+
       {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
         100% local. No text leaves your device.
       </h2> */}
 
-      <select
-        className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
-        defaultValue="default"
-        onChange={(e) => {
-          setInput(e.target.value);
-          classify(e.target.value);
-        }}
-      >
-        <option disabled value="default">
-          Example Case Summaries
-        </option>
-        <option key="none" value="">
-          Manual Entry
-        </option>
-        {sampleSummaries.map((obj, index) => (
-          <option key={index} value={obj.summary}>
-            {obj.title}
-          </option>
-        ))}
-      </select>
-      {/* TOOD: limit input chars, ensure tokenizer truncates. */}
-      <textarea
-        rows="8"
-        className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
-        placeholder="Enter case description here"
-        maxLength="2000"
-        value={input}
-        onInput={(e) => {
-          setInput(e.target.value);
-          classify(e.target.value);
-        }}
-      />
+      {introState !== "questionsComplete" && renderIntroFlow()}
+
+      {introState === "questionsComplete" && (
+        <>
+          <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
+            Enter A Description Of Your Denial Situation
+          </h2>
+
+          <select
+            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
+            defaultValue="default"
+            onChange={(e) => {
+              setInput(e.target.value);
+              classify(e.target.value);
+            }}
+          >
+            <option disabled value="default">
+              Example Case Summaries
+            </option>
+            <option key="none" value="">
+              Manual Entry
+            </option>
+            {sampleSummaries.map((obj, index) => (
+              <option key={index} value={obj.summary}>
+                {obj.title}
+              </option>
+            ))}
+          </select>
+          {/* TOOD: limit input chars, ensure tokenizer truncates. */}
+          <textarea
+            rows="8"
+            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
+            placeholder="Enter case description here"
+            maxLength="2000"
+            value={input}
+            onInput={(e) => {
+              setInput(e.target.value);
+              classify(e.target.value);
+            }}
+          />
+        </>
+      )}
+
       {ready !== null && (
         <pre
           className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
@@ -372,6 +472,7 @@ export default function Home() {
               return (
                 <div className="loading-container">
                   <p>Downloading model, please wait.</p>
+                  <p>This should take at most 10 seconds.</p>
                   <center>
                     <div className="lds-hourglass"></div>
                   </center>
