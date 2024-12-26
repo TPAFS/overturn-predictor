@@ -48,11 +48,11 @@ const sampleSummaries = [
     title: "Stomach Cancer Chemotherapy",
     summary: `This patient has extensive and inoperable carcinoma of the stomach. He was started on chemotherapy with Xeloda and Oxaliplatin, because he has less nausea with Oxaliplatin than with the alternative, Cisplatin. Oxaliplatin was denied as experimental for treatment of his gastric cancer.`,
   },
-  {
-    title: "Non-small cell Lung Cancer Diagnostics",
-    summary:
-      "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
-  },
+  // {
+  //   title: "Non-small cell Lung Cancer Diagnostics",
+  //   summary:
+  //     "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
+  // },
   {
     title: "Breast Cancer Screening",
     summary:
@@ -63,11 +63,11 @@ const sampleSummaries = [
     summary:
       "This is a patient with Crohn's Disease who is being treated with Humira. Their health plan has denied Anser ADA blood level testing for Humira, claiming it is investigational.",
   },
-  {
-    title: "ER Visit for Chest Pain",
-    summary:
-      "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
-  },
+  // {
+  //   title: "ER Visit for Chest Pain",
+  //   summary:
+  //     "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
+  // },
   {
     title: "Breast Cancer Proton Beam",
     summary:
@@ -115,6 +115,49 @@ const FAQ = () => {
       ],
     },
     {
+      question: `Why was this created?
+      `,
+      answer: [
+        `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
+        inappropriate health insurance coverage denials, and provides human
+        support in such cases for free. In helping to resolve over $275,000 In
+        inappropriate denials at zero cost since our formation, we've learned a thing or two about
+        some of the most problematic insurance related barriers jeopardizing
+        people's access to care.`,
+        `One of those barriers is simply a lack of knowledge about the recourse
+        one can seek when facing a denial. Many people either do not know that
+        they have appeal rights, or believe that the chance of success is
+        extremely low. This is a self-help tool that can empower patients, case
+        workers, and advocates to get a rough sense for the likelihood that
+        their denial could be overturned, if it were appealed to the level of an
+        external review.`,
+        `A cornerstone of our organizational thesis is that insurers administer inappropriate denials
+        because they have a strong, robust financial incentive to do so. We have studied the data <a href="https://blog.persius.org/investigations/claims_denials" style="color: #6F495C; text-decoration: underline;">extensively</a>,
+        and know that scaling appeal utilization from it's historical level of between .1 to 1% to higher
+        levels, say 10 to 50%, would completely alter the calculus that makes it financially viable to inappropriately deny
+        at scale.
+        Our mission is to use AI to help achieve this appeal utilization outcome, and thereby eradicate systematic inappropriate denials through
+        collective action. Our hope is that this tool encourages many who thought their denials were lost causes to pursue appeals.`,
+        `This tool can also help case workers managing large volumes of requests
+        for help triage cases, and focus
+        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
+      ],
+    },
+    {
+      question: `This tool says there is a good chance I can get my denial overturned.
+      How do I appeal my denial?
+      `,
+      answer: [
+        `There are many resources that can help you understand how to appeal a denial.`,
+        `Typically one has access to
+        an appeal process that their insurer administers, and a subsequent one that an independent review entity administers. The details vary
+        by insurance type and jurisdiction.
+        If you don't know what an appeal is and are confused about what the process looked like, as a high level starting point, we recommend taking a look at this friendly <a style="color: #6F495C; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>primer</a> to get
+        a sense for what's involved. Healthcare.gov also some <a style="color: #6F495C; text-decoration: underline;" href="https://www.healthcare.gov/marketplace-appeals/appeal-forms/">introductory material</a> for federal marketplace plans.`,
+        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>.`,
+      ],
+    },
+    {
       question: "What are you doing with the data I submit?",
       answer: [
         `Absolutely nothing! We take privacy and opt-out-by-default extremely seriously.
@@ -137,9 +180,11 @@ const FAQ = () => {
     {
       question: "How was this trained?",
       answer: [
-        `The model we use to predict case overturn outcomes was trained on data we curated from
-        historical case adjudications in numerous markets. These adjudications correspond to independent medical reviews.
-        We intend to open source the curated dataset with the release of an associated research paper, in late fall 2024.`,
+        `The model we use to predict appeal overturn likelihood was trained on data we constructed from
+        historical case adjudications in numerous insurance markets. The adjudications are from independent medical reviews.
+        We permissively released an <a style="color: #6F495C; text-decoration: underline;" href="https://github.com/TPAFS/hicric">unlabeled corpus</a>, and the training data we constructed, in late 2024.`,
+        `Our hope is that by open sourcing our work we will empower other community AI efforts aiming to support patients, which we believe can help drive collective action and systemic change. You can read more about the 
+        technical aspects of the data pipelines and models in our <a style="color: #6F495C; text-decoration: underline;" href="https://drive.google.com/file/d/1vsu0Ns6R6AeTX4-Hf2OdYqRvHD4yNm4y/view">preprint</a>.`,
       ],
     },
     {
@@ -171,39 +216,6 @@ const FAQ = () => {
         jeopardizing their financial or physical wellbeing compared to if they did appeal, you ought to place very little trust in the
         model! Doing so poses too grave a risk to be done without extremely thorough model performance evaluations,
         which we have not yet developed.`,
-      ],
-    },
-    {
-      question: `This tool says there is a good chance I can get my denial overturned.
-      How do I appeal my denial?
-      `,
-      answer: [
-        `There are many resources that can help you understand how to appeal a denial. Typically the process involves access to
-        an appeal process that your insurer administers, and a subsequent one that an independent review entity administers.
-        As a starting point, you can take a look at <a style="color: #6F495C; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>this primer</a>.`,
-        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>.`,
-      ],
-    },
-    {
-      question: `Why was this created?
-      `,
-      answer: [
-        `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
-        inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $275,000 In
-        inappropriate denials at zero cost since our formation, we've learned a thing or two about
-        some of the most problematic insurance related barriers jeopardizing
-        people's access to care.`,
-        `One of those barriers is simply a lack of knowledge about the recourse
-        one can seek when facing a denial. Many people either do not know that
-        they have appeal rights, or believe that the chance of success is
-        extremely low. This is a self-help tool that can empower patients, case
-        workers, and advocates to get a rough sense for the likelihood that
-        their denial could be overturned, if it were appealed to the level of an
-        external review.`,
-        `It can also help case workers managing large volumes of requests
-        for help triage cases, and focus
-        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
       ],
     },
   ];
@@ -318,7 +330,7 @@ export default function Home() {
       ],
       responses: [
         {
-          answer: "Ok",
+          answer: "Ok, Proceed",
           next: "questionsComplete",
         },
       ],
