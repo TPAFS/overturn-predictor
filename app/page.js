@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Details } from "./components/Details";
+import { GradientText } from "./components/GradientText";
+import { Title } from "./components/Title";
+import { Button } from "./components/Button";
 
 const sufficiencyThreshold = 0.005;
 const maxProbThreshold = 0.65;
@@ -44,11 +48,11 @@ const sampleSummaries = [
     title: "Stomach Cancer Chemotherapy",
     summary: `This patient has extensive and inoperable carcinoma of the stomach. He was started on chemotherapy with Xeloda and Oxaliplatin, because he has less nausea with Oxaliplatin than with the alternative, Cisplatin. Oxaliplatin was denied as experimental for treatment of his gastric cancer.`,
   },
-  {
-    title: "Non-small cell Lung Cancer Diagnostics",
-    summary:
-      "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
-  },
+  // {
+  //   title: "Non-small cell Lung Cancer Diagnostics",
+  //   summary:
+  //     "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
+  // },
   {
     title: "Breast Cancer Screening",
     summary:
@@ -59,11 +63,11 @@ const sampleSummaries = [
     summary:
       "This is a patient with Crohn's Disease who is being treated with Humira. Their health plan has denied Anser ADA blood level testing for Humira, claiming it is investigational.",
   },
-  {
-    title: "ER Visit for Chest Pain",
-    summary:
-      "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
-  },
+  // {
+  //   title: "ER Visit for Chest Pain",
+  //   summary:
+  //     "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
+  // },
   {
     title: "Breast Cancer Proton Beam",
     summary:
@@ -96,7 +100,7 @@ const FAQ = () => {
         `This tool can support patients and case workers who want to make an
         informed decision about appealing an inappropriate health insurance
         denial. Many patients forgo appeals assuming they have little to no
-        chance of success. This is actually <a style="color: #FB7185; text-decoration: underline;" href=https://blog.persius.org/investigations/claims_denials>far from true</a>. `,
+        chance of success. This is actually <a style="color: #6F495C; text-decoration: underline;" href=https://blog.persius.org/investigations/claims_denials>far from true</a>. `,
         `If you have a denial and are considering forgoing an appeal, you should
         know that seeking the advice of a professional is your best option. If
         that is not an option accessible to you, another good option is to just
@@ -108,6 +112,49 @@ const FAQ = () => {
         `Just enter a brief description of your situation, and you'll be given a prediction
         for the likelihood that your denial would get overturned if you sought all levels
         of appeal available to you.`,
+      ],
+    },
+    {
+      question: `Why was this created?
+      `,
+      answer: [
+        `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
+        inappropriate health insurance coverage denials, and provides human
+        support in such cases for free. In helping to resolve over $275,000 In
+        inappropriate denials at zero cost since our formation, we've learned a thing or two about
+        some of the most problematic insurance related barriers jeopardizing
+        people's access to care.`,
+        `One of those barriers is simply a lack of knowledge about the recourse
+        one can seek when facing a denial. Many people either do not know that
+        they have appeal rights, or believe that the chance of success is
+        extremely low. This is a self-help tool that can empower patients, case
+        workers, and advocates to get a rough sense for the likelihood that
+        their denial could be overturned, if it were appealed to the level of an
+        external review.`,
+        `A cornerstone of our organizational thesis is that insurers administer inappropriate denials
+        because they have a strong, robust financial incentive to do so. We have studied the data <a href="https://blog.persius.org/investigations/claims_denials" style="color: #6F495C; text-decoration: underline;">extensively</a>,
+        and know that scaling appeal utilization from it's historical level of between .1 to 1% to higher
+        levels, say 10 to 50%, would completely alter the calculus that makes it financially viable to inappropriately deny
+        at scale.
+        Our mission is to use AI to help achieve this appeal utilization outcome, and thereby eradicate systematic inappropriate denials through
+        collective action. Our hope is that this tool encourages many who thought their denials were lost causes to pursue appeals.`,
+        `This tool can also help case workers managing large volumes of requests
+        for help triage cases, and focus
+        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
+      ],
+    },
+    {
+      question: `This tool says there is a good chance I can get my denial overturned.
+      How do I appeal my denial?
+      `,
+      answer: [
+        `There are many resources that can help you understand how to appeal a denial.`,
+        `Typically one has access to
+        an appeal process that their insurer administers, and a subsequent one that an independent review entity administers. The details vary
+        by insurance type and jurisdiction.
+        If you don't know what an appeal is and are confused about what the process looked like, as a high level starting point, we recommend taking a look at this friendly <a style="color: #6F495C; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>primer</a> to get
+        a sense for what's involved. Healthcare.gov also some <a style="color: #6F495C; text-decoration: underline;" href="https://www.healthcare.gov/marketplace-appeals/appeal-forms/">introductory material</a> for federal marketplace plans.`,
+        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>.`,
       ],
     },
     {
@@ -133,9 +180,11 @@ const FAQ = () => {
     {
       question: "How was this trained?",
       answer: [
-        `The model we use to predict case overturn outcomes was trained on data we curated from
-        historical case adjudications in numerous markets. These adjudications correspond to independent medical reviews.
-        We intend to open source the curated dataset with the release of an associated research paper, in late fall 2024.`,
+        `The model we use to predict appeal overturn likelihood was trained on data we constructed from
+        historical case adjudications in numerous insurance markets. The adjudications are from independent medical reviews.
+        We permissively released an <a style="color: #6F495C; text-decoration: underline;" href="https://github.com/TPAFS/hicric">unlabeled corpus</a>, and the training data we constructed, in late 2024.`,
+        `Our hope is that by open sourcing our work we will empower other community AI efforts aiming to support patients, which we believe can help drive collective action and systemic change. You can read more about the 
+        technical aspects of the data pipelines and models in our <a style="color: #6F495C; text-decoration: underline;" href="https://drive.google.com/file/d/1vsu0Ns6R6AeTX4-Hf2OdYqRvHD4yNm4y/view">preprint</a>.`,
       ],
     },
     {
@@ -167,39 +216,6 @@ const FAQ = () => {
         jeopardizing their financial or physical wellbeing compared to if they did appeal, you ought to place very little trust in the
         model! Doing so poses too grave a risk to be done without extremely thorough model performance evaluations,
         which we have not yet developed.`,
-      ],
-    },
-    {
-      question: `This tool says there is a good chance I can get my denial overturned.
-      How do I appeal my denial?
-      `,
-      answer: [
-        `There are many resources that can help you understand how to appeal a denial. Typically the process involves access to
-        an appeal process that your insurer administers, and a subsequent one that an independent review entity administers.
-        As a starting point, you can take a look at <a style="color: #FB7185; text-decoration: underline;" href=https://drive.google.com/file/d/1cGPjPudmnFJUbunTAtg_b6OrDfgOMqWo/view>this primer</a>.`,
-        `We also help people navigate these processes, for free. Feel free to reach out to <a href="mailto:info@persius.org" style="color: #FB7185; text-decoration: underline;">info@persius.org</a>.`,
-      ],
-    },
-    {
-      question: `Why was this created?
-      `,
-      answer: [
-        `<a href="https://persius.org" style="color: #FB7185; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
-        inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $275,000 In
-        inappropriate denials at zero cost since our formation, we've learned a thing or two about
-        some of the most problematic insurance related barriers jeopardizing
-        people's access to care.`,
-        `One of those barriers is simply a lack of knowledge about the recourse
-        one can seek when facing a denial. Many people either do not know that
-        they have appeal rights, or believe that the chance of success is
-        extremely low. This is a self-help tool that can empower patients, case
-        workers, and advocates to get a rough sense for the likelihood that
-        their denial could be overturned, if it were appealed to the level of an
-        external review.`,
-        `It can also help case workers managing large volumes of requests
-        for help triage cases, and focus
-        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
       ],
     },
   ];
@@ -261,6 +277,66 @@ export default function Home() {
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
 
+  const introFlow = [
+    {
+      id: "question1",
+      text: [
+        "Have you had a pre-authorization request or claim for coverage denied?",
+      ],
+      responses: [
+        { answer: "Yes", next: "question2" },
+        { answer: "No", next: "message1" },
+      ],
+    },
+    {
+      id: "message1",
+      message: [
+        "This tool is meant to support those facing coverage denials. Please see the FAQ for more info.",
+      ],
+      next: "questionsComplete",
+    },
+    {
+      id: "question2",
+      text: [
+        "Is attaining coverage critical to your physical or financial well being?",
+      ],
+      responses: [
+        {
+          answer: "Yes",
+          next: "message2",
+        },
+        { answer: "No", next: "statement3" },
+      ],
+    },
+    {
+      id: "message2",
+      message: [
+        `You should seek human support, and consider filing an
+          appeal.`,
+        `We suggest you do <b>not</b> use our automated tool to make any
+          decisions, as it is an imperfect AI model and in your situation the risk of harm from bad model outputs outweighs the potential benefits.`,
+        `If you need help with next steps, 
+          reach out to us at <a href="info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>. We help people with coverage denials for free.`,
+      ],
+      next: "questionsComplete",
+    },
+    {
+      id: "statement3",
+      text: [
+        `You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general
+      advice is to appeal if you have the time and resources, as appeals are often overturned.`,
+        `If you are considering forgoing an appeal because you
+      believe it is unlikely to be successful, use our model to update that belief.`,
+      ],
+      responses: [
+        {
+          answer: "Ok, Proceed",
+          next: "questionsComplete",
+        },
+      ],
+    },
+  ];
+
   // Create a reference to the worker object.
   const worker = useRef(null);
 
@@ -302,61 +378,125 @@ export default function Home() {
     }
   }, []);
 
-  const [open, setOpen] = useState(null);
+  const [introState, setIntroState] = useState("question1");
+
+  const currentStep = introFlow.find((step) => step.id === introState);
+
+  const handleResponse = (nextState) => {
+    setIntroState(nextState);
+  };
+
+  const renderIntroFlow = () => {
+    if (!currentStep) return null;
+
+    if (currentStep.text) {
+      return (
+        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
+          {currentStep.text.map((text, index) => (
+            <Details
+              key={index}
+              className="text-lg font-medium text-gray-600 mb-4"
+              dangerouslySetInnerHTML={{ __html: text }}
+            ></Details>
+          ))}
+          {currentStep.responses.map((response, index) => (
+            <Button
+              key={index}
+              className={`mx-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition duration-200`}
+              onClick={() => handleResponse(response.next)}
+            >
+              {response.answer}
+            </Button>
+          ))}
+        </div>
+      );
+    }
+
+    if (currentStep.message) {
+      return (
+        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
+          {currentStep.message.map((message, index) => (
+            <p
+              key={index}
+              className="text-lg font-medium text-gray-700 mb-3"
+              dangerouslySetInnerHTML={{ __html: message }}
+            >
+              {/* {" "} */}
+              {/* {message}{" "} */}
+            </p>
+          ))}
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <main className="flex flex-col items-center mt-16 mb-16">
-      <h1 className="flex-auto text-5xl font-bold mb-3 text-slate-400 text-center ">
-        Appeal Overturn Predictor
-      </h1>
-      <h3 className="flex-auto text-md mb-4 text-slate-300 text-center">
+    <main className="flex flex-col items-center mt-24 mb-24 px-8">
+      <Title size="md">
+        <GradientText className="from-slate-400 to-slate-600">
+          Appeal Overturn Predictor
+        </GradientText>
+      </Title>
+      <h3 className="text-lg mt-4 mb-8 text-light text-center">
         {" "}
         A{" "}
-        <a className="underline text-rose-400" href="https://persius.org">
+        <a
+          className="underline text-primary-500 hover:text-primary-400 transition duration-200"
+          href="https://persius.org"
+        >
           Persius
         </a>{" "}
         product.
       </h3>
-      <h2 className="flex-auto w-[85vw] text-2xl mt-8 mb-8 font-bold text-slate-500 text-center">
-        AI For Patients Facing <br /> Health Insurance Denials
-      </h2>
-      <img src="logo.jpeg" width="300px" height="300px" className="mb-6"></img>
+
       {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
         100% local. No text leaves your device.
       </h2> */}
+      {introState !== "questionsComplete" && renderIntroFlow()}
 
-      <select
-        className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
-        defaultValue="default"
-        onChange={(e) => {
-          setInput(e.target.value);
-          classify(e.target.value);
-        }}
-      >
-        <option disabled value="default">
-          Example Case Summaries
-        </option>
-        <option key="none" value="">
-          Manual Entry
-        </option>
-        {sampleSummaries.map((obj, index) => (
-          <option key={index} value={obj.summary}>
-            {obj.title}
-          </option>
-        ))}
-      </select>
-      {/* TOOD: limit input chars, ensure tokenizer truncates. */}
-      <textarea
-        rows="8"
-        className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
-        placeholder="Enter case description here"
-        maxLength="2000"
-        value={input}
-        onInput={(e) => {
-          setInput(e.target.value);
-          classify(e.target.value);
-        }}
-      />
+      {introState === "questionsComplete" && (
+        <div className="text-center flex flex-col items-center">
+          {/* <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
+            Enter A Description Of Your Denial Situation
+          </h2> */}
+
+          <select
+            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
+            defaultValue="default"
+            onChange={(e) => {
+              setInput(e.target.value);
+              classify(e.target.value);
+            }}
+          >
+            <option disabled value="default">
+              Example Case Summaries
+            </option>
+            <option key="none" value="">
+              Manual Entry
+            </option>
+            {sampleSummaries.map((obj, index) => (
+              <option key={index} value={obj.summary}>
+                {obj.title}
+              </option>
+            ))}
+          </select>
+          {/* TODO: limit input chars, ensure tokenizer truncates. */}
+          <textarea
+            rows="8"
+            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
+            placeholder="Enter a description of your coverage denial here..."
+            maxLength="2000"
+            value={input}
+            onInput={(e) => {
+              setInput(e.target.value);
+              classify(e.target.value);
+            }}
+          />
+        </div>
+      )}
+
       {ready !== null && (
         <pre
           className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
@@ -372,6 +512,7 @@ export default function Home() {
               return (
                 <div className="loading-container">
                   <p>Downloading model, please wait.</p>
+                  <p>This should take at most 10 seconds.</p>
                   <center>
                     <div className="lds-hourglass"></div>
                   </center>
@@ -416,10 +557,10 @@ export default function Home() {
         an appeal based on this tool.
       </p>
       <footer>
-        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
           <a
             href="https://github.com/TPAFS/overturn-predictor"
-            style={{ color: "#FB7185", textDecoration: "underline" }}
+            style={{ textDecoration: "underline" }}
           >
             View Source on Github
           </a>
