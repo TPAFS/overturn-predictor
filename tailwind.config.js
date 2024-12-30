@@ -22,6 +22,12 @@ module.exports = {
         700: "#576F64",
         800: "#8FA09E",
       },
+      persius_blue: {
+        400: "#8fc4d6",
+        500: "#1f8aad",
+        600: "#125368",
+        700: "#0c3745",
+      },
       // Gradient colors
       neon: {
         blue: colors.blue[500],
