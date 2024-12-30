@@ -391,30 +391,32 @@ export default function Home() {
 
     if (currentStep.text) {
       return (
-        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
-          {currentStep.text.map((text, index) => (
-            <Details
-              key={index}
-              className="text-lg font-medium text-gray-600 mb-4"
-              dangerouslySetInnerHTML={{ __html: text }}
-            ></Details>
-          ))}
-          {currentStep.responses.map((response, index) => (
-            <Button
-              key={index}
-              className={`mx-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition duration-200`}
-              onClick={() => handleResponse(response.next)}
-            >
-              {response.answer}
-            </Button>
-          ))}
+        <div className="flex">
+          <div className="max-w-lg mx-auto border-4 border-persius_blue-600 bg-persius_blue-400 bg-opacity-10 shadow-lg rounded-lg p-6 text-center">
+            {currentStep.text.map((text, index) => (
+              <Details
+                key={index}
+                className="text-lg font-medium text-gray-600 mb-4"
+                dangerouslySetInnerHTML={{ __html: text }}
+              ></Details>
+            ))}
+            {currentStep.responses.map((response, index) => (
+              <Button
+                key={index}
+                className={`mx-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition duration-200`}
+                onClick={() => handleResponse(response.next)}
+              >
+                {response.answer}
+              </Button>
+            ))}
+          </div>
         </div>
       );
     }
 
     if (currentStep.message) {
       return (
-        <div className="max-w-lg mx-auto bg-slate-400 shadow-lg rounded-lg p-6 text-center">
+        <div className="max-w-lg mx-auto border-4 border-persius_blue-600 bg-persius_blue-400 bg-opacity-10 shadow-lg rounded-lg p-6 text-center">
           {currentStep.message.map((message, index) => (
             <p
               key={index}
@@ -433,139 +435,170 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center mt-24 mb-24 px-8">
-      <Title size="md">
-        <GradientText className="from-slate-400 to-slate-600">
-          Appeal Overturn Predictor
-        </GradientText>
-      </Title>
-      <h3 className="text-lg mt-4 mb-8 text-light text-center">
-        {" "}
-        A{" "}
-        <a
-          className="underline text-primary-500 hover:text-primary-400 transition duration-200"
-          href="https://persius.org"
-        >
-          Persius
-        </a>{" "}
-        product.
-      </h3>
+    <>
+      <header>
+        <div className="flex justify-between items-center w-full px-8 py-4  shadow-md">
+          {/* Demo/Beta banner  */}
+          <div className="flex items-center bg-amber-600 text-gray-100 text-sm font-semibold px-4 py-2 rounded">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.29 3.86l-9 16A1 1 0 002 21h18a1 1 0 00.85-1.54l-9-16a1 1 0 00-1.71 0z"
+              />
+            </svg>
+            Beta
+          </div>
+        </div>
+      </header>
+      <main className="flex flex-col items-center mt-24 mb-24 px-8">
+        <div className="flex flex-col justify-between items-center">
+          <Title size="md" className="mb-10">
+            <GradientText className="from-slate-400 to-slate-600">
+              Appeal Overturn Predictor
+            </GradientText>
+          </Title>
+          <img
+            src="/logo.jpeg"
+            alt="Logo"
+            className=" hidden md:block h-auto w-1/3 mx-4" // Adjusts height, keeps aspect ratio
+          />
+        </div>
+        <h3 className="text-lg mt-4 mb-8 text-light text-center">
+          {" "}
+          A{" "}
+          <a
+            className="underline text-primary-500 hover:text-primary-400 transition duration-200"
+            href="https://persius.org"
+          >
+            Persius
+          </a>{" "}
+          product.
+        </h3>
 
-      {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
+        {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
         100% local. No text leaves your device.
       </h2> */}
-      {introState !== "questionsComplete" && renderIntroFlow()}
+        {introState !== "questionsComplete" && renderIntroFlow()}
 
-      {introState === "questionsComplete" && (
-        <div className="text-center flex flex-col items-center">
-          {/* <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
+        {introState === "questionsComplete" && (
+          <div className="text-center flex flex-col items-center">
+            {/* <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
             Enter A Description Of Your Denial Situation
           </h2> */}
 
-          <select
-            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
-            defaultValue="default"
-            onChange={(e) => {
-              setInput(e.target.value);
-              classify(e.target.value);
-            }}
-          >
-            <option disabled value="default">
-              Example Case Summaries
-            </option>
-            <option key="none" value="">
-              Manual Entry
-            </option>
-            {sampleSummaries.map((obj, index) => (
-              <option key={index} value={obj.summary}>
-                {obj.title}
+            <select
+              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
+              defaultValue="default"
+              onChange={(e) => {
+                setInput(e.target.value);
+                classify(e.target.value);
+              }}
+            >
+              <option disabled value="default">
+                Example Case Summaries
               </option>
-            ))}
-          </select>
-          {/* TODO: limit input chars, ensure tokenizer truncates. */}
-          <textarea
-            rows="8"
-            className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
-            placeholder="Enter a description of your coverage denial here..."
-            maxLength="2000"
-            value={input}
-            onInput={(e) => {
-              setInput(e.target.value);
-              classify(e.target.value);
-            }}
-          />
-        </div>
-      )}
+              <option key="none" value="">
+                Manual Entry
+              </option>
+              {sampleSummaries.map((obj, index) => (
+                <option key={index} value={obj.summary}>
+                  {obj.title}
+                </option>
+              ))}
+            </select>
+            {/* TODO: limit input chars, ensure tokenizer truncates. */}
+            <textarea
+              rows="8"
+              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
+              placeholder="Enter a description of your coverage denial here..."
+              maxLength="2000"
+              value={input}
+              onInput={(e) => {
+                setInput(e.target.value);
+                classify(e.target.value);
+              }}
+            />
+          </div>
+        )}
 
-      {ready !== null && (
-        <pre
-          className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
-            result !== null
-              ? // ? getColorFromOverturnLiklihood(result["overturn_likelihood"])
-                // getColorFromProbs(result["output_probs"])
-                getColorFromDecision(result)
-              : ""
-          }`}
-        >
-          {(() => {
-            if (!ready || !result) {
-              return (
-                <div className="loading-container">
-                  <p>Downloading model, please wait.</p>
-                  <p>This should take at most 10 seconds.</p>
-                  <center>
-                    <div className="lds-hourglass"></div>
-                  </center>
-                </div>
-              );
-            } else if (input.length < 5) {
-              return "Enter a case description.";
-              // } else if (result["output_probs"][0] > sufficiencyThreshold) {
-              //   return "Insufficient or Irrelevant Information";
-            } else if (
-              result["decision"] === "Insufficient" ||
-              result["max_prob"] < maxProbThreshold
-            ) {
-              return "Insufficient Information For Model";
-            } else {
-              return JSON.stringify(
-                {
-                  decision: result["decision"],
-                  // overturn_likelihood: `${Math.round(
-                  //   result["overturn_likelihood"] * 100,
-                  //   2
-                  // )}%`,
-                  // inference_time: `${
-                  //   result["inference_time"].toFixed(3) * 1000
-                  // } ms`,
-                  confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
-                },
-                null,
-                2
-              );
-            }
-          })()}
-        </pre>
-      )}
-      <FAQ />
-      <p className="wrap mx-4 max-w-xl text-sm mt-16 mb-8 text-slate-400 text-center">
-        <b>Disclaimer: </b>This is an informational self-help tool. Its outputs
-        should not be interpreted as <i>advice</i> of any kind. You should only
-        grant trust to its outputs as qualified by your own explicit risk
-        assessment. In particular, if the implications of lack of coverage have
-        serious implications for your wellbeing, you should not decide to forgo
-        an appeal based on this tool.
-      </p>
-      <footer>
-        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
-          <a
-            href="https://github.com/TPAFS/overturn-predictor"
-            style={{ textDecoration: "underline" }}
+        {ready !== null && (
+          <pre
+            className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
+              result !== null
+                ? // ? getColorFromOverturnLiklihood(result["overturn_likelihood"])
+                  // getColorFromProbs(result["output_probs"])
+                  getColorFromDecision(result)
+                : ""
+            }`}
           >
-            View Source on Github
-          </a>
-        </div>
-      </footer>
-    </main>
+            {(() => {
+              if (!ready || !result) {
+                return (
+                  <div className="loading-container">
+                    <p>Downloading model, please wait.</p>
+                    <p>This should take at most 10 seconds.</p>
+                    <center>
+                      <div className="lds-hourglass"></div>
+                    </center>
+                  </div>
+                );
+              } else if (input.length < 5) {
+                return "Enter a case description.";
+                // } else if (result["output_probs"][0] > sufficiencyThreshold) {
+                //   return "Insufficient or Irrelevant Information";
+              } else if (
+                result["decision"] === "Insufficient" ||
+                result["max_prob"] < maxProbThreshold
+              ) {
+                return "Insufficient Information For Model";
+              } else {
+                return JSON.stringify(
+                  {
+                    decision: result["decision"],
+                    // overturn_likelihood: `${Math.round(
+                    //   result["overturn_likelihood"] * 100,
+                    //   2
+                    // )}%`,
+                    // inference_time: `${
+                    //   result["inference_time"].toFixed(3) * 1000
+                    // } ms`,
+                    confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
+                  },
+                  null,
+                  2
+                );
+              }
+            })()}
+          </pre>
+        )}
+        <FAQ />
+        <p className="wrap mx-4 max-w-xl text-sm mt-16 mb-8 text-slate-400 text-center">
+          <b>Disclaimer: </b>This is an informational self-help tool. Its
+          outputs should not be interpreted as <i>advice</i> of any kind. You
+          should only grant trust to its outputs as qualified by your own
+          explicit risk assessment. In particular, if the implications of lack
+          of coverage have serious implications for your wellbeing, you should
+          not decide to forgo an appeal based on this tool.
+        </p>
+        <footer>
+          <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
+            <a
+              href="https://github.com/TPAFS/overturn-predictor"
+              style={{ textDecoration: "underline" }}
+            >
+              View Source on Github
+            </a>
+          </div>
+        </footer>
+      </main>
+    </>
   );
 }
