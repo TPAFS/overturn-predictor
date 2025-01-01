@@ -120,7 +120,7 @@ const FAQ = () => {
       answer: [
         `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
         inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $275,000 In
+        support in such cases for free. In helping to resolve over $350,000 in
         inappropriate denials at zero cost since our formation, we've learned a thing or two about
         some of the most problematic insurance related barriers jeopardizing
         people's access to care.`,
@@ -140,7 +140,7 @@ const FAQ = () => {
         collective action. Our hope is that this tool encourages many who thought their denials were lost causes to pursue appeals.`,
         `This tool can also help case workers managing large volumes of requests
         for help triage cases, and focus
-        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
+        on denials which seem very likely to be inappropriate.`,
       ],
     },
     {
