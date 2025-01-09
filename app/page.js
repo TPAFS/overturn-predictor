@@ -120,7 +120,7 @@ const FAQ = () => {
       answer: [
         `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
         inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $275,000 In
+        support in such cases for free. In helping to resolve over $350,000 in
         inappropriate denials at zero cost since our formation, we've learned a thing or two about
         some of the most problematic insurance related barriers jeopardizing
         people's access to care.`,
@@ -140,7 +140,7 @@ const FAQ = () => {
         collective action. Our hope is that this tool encourages many who thought their denials were lost causes to pursue appeals.`,
         `This tool can also help case workers managing large volumes of requests
         for help triage cases, and focus
-        on denials which seem very likely to be inappropriate. This is a problem we have some experience with :)`,
+        on denials which seem very likely to be inappropriate.`,
       ],
     },
     {
@@ -438,7 +438,7 @@ export default function Home() {
     <>
       <header>
         <div className="flex justify-between items-center w-full px-8 py-4  shadow-md">
-          {/* Demo/Beta banner  */}
+          {/* Demo banner  */}
           <div className="flex items-center bg-amber-600 text-gray-100 text-sm font-semibold px-4 py-2 rounded">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -454,7 +454,7 @@ export default function Home() {
                 d="M10.29 3.86l-9 16A1 1 0 002 21h18a1 1 0 00.85-1.54l-9-16a1 1 0 00-1.71 0z"
               />
             </svg>
-            Beta
+            Demo
           </div>
         </div>
       </header>
@@ -473,14 +473,13 @@ export default function Home() {
         </div>
         <h3 className="text-lg mt-4 mb-8 text-light text-center">
           {" "}
-          A{" "}
+          Built by{" "}
           <a
             className="underline text-primary-500 hover:text-primary-400 transition duration-200"
             href="https://persius.org"
           >
-            Persius
+            Persius.
           </a>{" "}
-          product.
         </h3>
 
         {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
