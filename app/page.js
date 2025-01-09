@@ -438,7 +438,7 @@ export default function Home() {
     <>
       <header>
         <div className="flex justify-between items-center w-full px-8 py-4  shadow-md">
-          {/* Demo/Beta banner  */}
+          {/* Demo banner  */}
           <div className="flex items-center bg-amber-600 text-gray-100 text-sm font-semibold px-4 py-2 rounded">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -454,7 +454,7 @@ export default function Home() {
                 d="M10.29 3.86l-9 16A1 1 0 002 21h18a1 1 0 00.85-1.54l-9-16a1 1 0 00-1.71 0z"
               />
             </svg>
-            Beta
+            Demo
           </div>
         </div>
       </header>
