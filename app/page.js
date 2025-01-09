@@ -473,14 +473,13 @@ export default function Home() {
         </div>
         <h3 className="text-lg mt-4 mb-8 text-light text-center">
           {" "}
-          A{" "}
+          Built by{" "}
           <a
             className="underline text-primary-500 hover:text-primary-400 transition duration-200"
             href="https://persius.org"
           >
-            Persius
+            Persius.
           </a>{" "}
-          product.
         </h3>
 
         {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
