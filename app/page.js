@@ -279,59 +279,121 @@ export default function Home() {
 
   const introFlow = [
     {
-      id: "question1",
+      id: "initial",
+      text: [
+        "This tool helps predict the likelihood of success when appealing an insurance denial. Get data-driven insights based on historical appeal outcomes.",
+      ],
+      responses: [{ answer: "Start Assessment", next: "pre_auth_question" }],
+    },
+    {
+      id: "pre_auth_question",
+      title: "Coverage Denial",
+      stepNumber: 1,
       text: [
         "Have you had a pre-authorization request or claim for coverage denied?",
       ],
+      options: ["Yes", "No"],
       responses: [
-        { answer: "Yes", next: "question2" },
-        { answer: "No", next: "message1" },
+        { answer: "Back", next: "initial", secondary: true },
+        { answer: "Continue", next: "urgent_question", primary: true },
       ],
+      optionActions: {
+        Yes: "urgent_question",
+        No: "message1",
+      },
     },
     {
       id: "message1",
       message: [
         "This tool is meant to support those facing coverage denials. Please see the FAQ for more info.",
       ],
-      next: "questionsComplete",
+      responses: [
+        { answer: "Return to Start", next: "initial", secondary: true },
+      ],
     },
     {
-      id: "question2",
+      id: "urgent_question",
+      title: "Urgency Assessment",
+      stepNumber: 2,
       text: [
         "Is attaining coverage critical to your physical or financial well being?",
       ],
+      options: ["Yes", "No"],
       responses: [
-        {
-          answer: "Yes",
-          next: "message2",
-        },
-        { answer: "No", next: "statement3" },
+        { answer: "Back", next: "pre_auth_question", secondary: true },
+        { answer: "Continue", next: "question1", primary: true },
       ],
+      optionActions: {
+        Yes: "message2",
+        No: "statement3",
+      },
     },
     {
       id: "message2",
       message: [
-        `You should seek human support, and consider filing an
-          appeal.`,
-        `We suggest you do <b>not</b> use our automated tool to make any
-          decisions, as it is an imperfect AI model and in your situation the risk of harm from bad model outputs outweighs the potential benefits.`,
-        `If you need help with next steps, 
-          reach out to us at <a href="info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>. We help people with coverage denials for free.`,
+        "You should seek human support, and consider filing an appeal.",
+        "We suggest you do <b>not</b> use our automated tool to make any decisions, as it is an imperfect AI model and in your situation the risk of harm from bad model outputs outweighs the potential benefits.",
+        'If you need help with next steps, reach out to us at <a href="mailto:info@persius.org" style="color: #6F495C; text-decoration: underline;">info@persius.org</a>. We help people with coverage denials for free.',
       ],
-      next: "questionsComplete",
+      responses: [
+        { answer: "Return to Start", next: "initial", secondary: true },
+        { answer: "Continue Anyway", next: "question1", primary: true },
+      ],
     },
     {
       id: "statement3",
+      title: "Information",
       text: [
-        `You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general
-      advice is to appeal if you have the time and resources, as appeals are often overturned.`,
-        `If you are considering forgoing an appeal because you
-      believe it is unlikely to be successful, use our model to update that belief.`,
+        "You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general advice is to appeal if you have the time and resources, as appeals are often overturned.",
+        "If you are considering forgoing an appeal because you believe it is unlikely to be successful, use our model to update that belief.",
+      ],
+      responses: [{ answer: "Ok, Proceed", next: "question1", primary: true }],
+    },
+    {
+      id: "question1",
+      title: "Insurance Type",
+      stepNumber: 3,
+      text: ["What type of insurance plan are you appealing against?"],
+      options: ["Employer", "Marketplace", "Medicare", "Medicaid"],
+      responses: [
+        { answer: "Back", next: "urgent_question", secondary: true },
+        { answer: "Skip", next: "question2", primary: true },
+      ],
+    },
+    {
+      id: "question2",
+      title: "Denial Reason",
+      stepNumber: 4,
+      text: ["What was the primary reason for the coverage denial?"],
+      options: [
+        "Medical Necessity",
+        "Experimental/Investigational",
+        "Out of Network",
+        "Prior Authorization",
+        "Other",
       ],
       responses: [
+        { answer: "Back", next: "question1", secondary: true },
+        { answer: "Skip", next: "question3", primary: true },
+      ],
+    },
+    {
+      id: "question3",
+      title: "Case Details",
+      stepNumber: 5,
+      text: ["Do you have any of the following supporting elements?"],
+      checkboxes: [
+        "Doctor's letter of medical necessity",
+        "Peer-reviewed studies supporting the treatment",
+        "Second opinion from specialist",
+        "Similar cases that were approved",
+      ],
+      responses: [
+        { answer: "Back", next: "question2", secondary: true },
         {
-          answer: "Ok, Proceed",
+          answer: "Continue to Case Summary",
           next: "questionsComplete",
+          primary: true,
         },
       ],
     },
@@ -378,7 +440,7 @@ export default function Home() {
     }
   }, []);
 
-  const [introState, setIntroState] = useState("question1");
+  const [introState, setIntroState] = useState("initial");
 
   const currentStep = introFlow.find((step) => step.id === introState);
 
@@ -386,58 +448,198 @@ export default function Home() {
     setIntroState(nextState);
   };
 
-  const renderIntroFlow = () => {
+  const renderIntroFlowContent = () => {
     if (!currentStep) return null;
 
-    if (currentStep.text) {
-      return (
-        <div className="flex">
-          <div className="max-w-lg mx-auto border-4 border-persius_blue-600 bg-persius_blue-400 bg-opacity-10 shadow-lg rounded-lg p-6 text-center">
-            {currentStep.text.map((text, index) => (
-              <Details
-                key={index}
-                className="text-lg font-medium text-gray-600 mb-4"
-                dangerouslySetInnerHTML={{ __html: text }}
-              ></Details>
-            ))}
-            {currentStep.responses.map((response, index) => (
-              <Button
-                key={index}
-                className={`mx-2 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-400 transition duration-200`}
-                onClick={() => handleResponse(response.next)}
-              >
-                {response.answer}
-              </Button>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    if (currentStep.message) {
-      return (
-        <div className="max-w-lg mx-auto border-4 border-persius_blue-600 bg-persius_blue-400 bg-opacity-10 shadow-lg rounded-lg p-6 text-center">
-          {currentStep.message.map((message, index) => (
-            <p
-              key={index}
-              className="text-lg font-medium text-gray-700 mb-3"
-              dangerouslySetInnerHTML={{ __html: message }}
-            >
-              {/* {" "} */}
-              {/* {message}{" "} */}
+    return (
+      <div className="w-[85vw] max-w-lg mx-auto bg-gray-900 p-8 border border-gray-800 rounded">
+        {/* Initial step (welcome screen) */}
+        {currentStep.id === "initial" && (
+          <>
+            <p className="text-slate-400 mb-8 text-center">
+              {currentStep.text}
             </p>
-          ))}
-        </div>
-      );
-    }
+            <div className="flex justify-center">
+              <button
+                onClick={() => setIntroState(currentStep.responses[0].next)}
+                className="px-6 py-3 bg-gray-800 text-white-100 font-medium rounded border border-gray-1000 hover:bg-gray-700 transition duration-200"
+              >
+                {currentStep.responses[0].answer}
+              </button>
+            </div>
+          </>
+        )}
 
-    return null;
+        {/* Message or info screens */}
+        {(currentStep.id === "message1" || currentStep.id === "message2") && (
+          <>
+            <div className="mb-6">
+              {currentStep.message.map((message, idx) => (
+                <p
+                  key={idx}
+                  className="text-slate-400 mb-4 text-center"
+                  dangerouslySetInnerHTML={{ __html: message }}
+                ></p>
+              ))}
+            </div>
+            <div className="flex justify-center mt-6">
+              {currentStep.responses.map((response, index) => (
+                <button
+                  key={index}
+                  onClick={() => setIntroState(response.next)}
+                  className={`px-4 py-2 mx-2 ${
+                    response.primary
+                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
+                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
+                  } rounded transition duration-200`}
+                >
+                  {response.answer}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Statement screen */}
+        {currentStep.id === "statement3" && (
+          <>
+            <div className="mb-6">
+              {currentStep.text.map((statement, idx) => (
+                <p key={idx} className="text-slate-400 mb-4 text-center">
+                  {statement}
+                </p>
+              ))}
+            </div>
+            <div className="flex justify-center mt-6">
+              {currentStep.responses.map((response, index) => (
+                <button
+                  key={index}
+                  onClick={() => setIntroState(response.next)}
+                  className={`px-4 py-2 ${
+                    response.primary
+                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
+                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
+                  } rounded transition duration-200`}
+                >
+                  {response.answer}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Numbered question steps with options */}
+        {(currentStep.id === "question1" ||
+          currentStep.id === "question2" ||
+          currentStep.id === "pre_auth_question" ||
+          currentStep.id === "urgent_question") && (
+          <>
+            <div className="flex items-center mb-6">
+              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                {currentStep.stepNumber}
+              </div>
+              <h3 className="text-xl font-bold text-slate-400">
+                {currentStep.title}
+              </h3>
+            </div>
+            <p className="text-slate-400 mb-6">{currentStep.text}</p>
+            <div
+              className={`grid grid-cols-1 ${
+                currentStep.id === "question1" ||
+                currentStep.id === "pre_auth_question" ||
+                currentStep.id === "urgent_question"
+                  ? "md:grid-cols-2"
+                  : ""
+              } gap-4 mb-8`}
+            >
+              {currentStep.options.map((option) => (
+                <button
+                  key={option}
+                  className="p-4 bg-gray-800 hover:bg-gray-700 text-white-100 rounded border border-gray-1000 transition duration-200 text-left"
+                  onClick={() => {
+                    // Use optionActions if available, otherwise use the primary response
+                    const nextState =
+                      currentStep.optionActions?.[option] ||
+                      currentStep.responses.find((r) => r.primary).next;
+                    setIntroState(nextState);
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-between mt-6">
+              {currentStep.responses.map((response, index) => (
+                <button
+                  key={index}
+                  onClick={() => setIntroState(response.next)}
+                  className={`px-4 py-2 ${
+                    response.primary
+                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
+                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
+                  } rounded transition duration-200`}
+                >
+                  {response.answer}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Question with checkboxes */}
+        {currentStep.id === "question3" && (
+          <>
+            <div className="flex items-center mb-6">
+              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                {currentStep.stepNumber}
+              </div>
+              <h3 className="text-xl font-bold text-slate-400">
+                {currentStep.title}
+              </h3>
+            </div>
+            <p className="text-slate-400 mb-6">{currentStep.text}</p>
+            <div className="space-y-3 mb-8">
+              {currentStep.checkboxes.map((option) => (
+                <div
+                  key={option}
+                  className="flex items-center p-4 bg-gray-800 rounded border border-gray-1000"
+                >
+                  <input
+                    type="checkbox"
+                    id={option}
+                    className="mr-3 h-5 w-5 accent-primary-500"
+                  />
+                  <label htmlFor={option} className="text-white-100">
+                    {option}
+                  </label>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between mt-6">
+              {currentStep.responses.map((response, index) => (
+                <button
+                  key={index}
+                  onClick={() => setIntroState(response.next)}
+                  className={`px-4 py-2 ${
+                    response.primary
+                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
+                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
+                  } rounded transition duration-200`}
+                >
+                  {response.answer}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
   };
 
   return (
     <>
       <header>
-        <div className="flex justify-between items-center w-full px-8 py-4  shadow-md">
+        <div className="flex justify-between items-center w-full px-8 py-4 shadow-md">
           {/* Demo banner  */}
           <div className="flex items-center bg-amber-600 text-gray-100 text-sm font-semibold px-4 py-2 rounded">
             <svg
@@ -468,7 +670,7 @@ export default function Home() {
           <img
             src="/logo.jpeg"
             alt="Logo"
-            className=" hidden md:block h-auto w-1/3 mx-4" // Adjusts height, keeps aspect ratio
+            className="hidden md:block h-auto w-1/3 mx-4" // Adjusts height, keeps aspect ratio
           />
         </div>
         <h3 className="text-lg mt-4 mb-8 text-light text-center">
@@ -482,17 +684,10 @@ export default function Home() {
           </a>{" "}
         </h3>
 
-        {/* <h2 className="flex-auto w-[85vw] text-2xl mb-8 font-bold text-slate-400 text-center">
-        100% local. No text leaves your device.
-      </h2> */}
-        {introState !== "questionsComplete" && renderIntroFlow()}
+        {introState !== "questionsComplete" && renderIntroFlowContent()}
 
         {introState === "questionsComplete" && (
           <div className="text-center flex flex-col items-center">
-            {/* <h2 className="w-[85vw] text-2xl mt-2 mb-8 font-bold text-slate-500 text-center">
-            Enter A Description Of Your Denial Situation
-          </h2> */}
-
             <select
               className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
               defaultValue="default"
@@ -513,7 +708,6 @@ export default function Home() {
                 </option>
               ))}
             </select>
-            {/* TODO: limit input chars, ensure tokenizer truncates. */}
             <textarea
               rows="8"
               className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
@@ -531,11 +725,7 @@ export default function Home() {
         {ready !== null && (
           <pre
             className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
-              result !== null
-                ? // ? getColorFromOverturnLiklihood(result["overturn_likelihood"])
-                  // getColorFromProbs(result["output_probs"])
-                  getColorFromDecision(result)
-                : ""
+              result !== null ? getColorFromDecision(result) : ""
             }`}
           >
             {(() => {
@@ -551,8 +741,6 @@ export default function Home() {
                 );
               } else if (input.length < 5) {
                 return "Enter a case description.";
-                // } else if (result["output_probs"][0] > sufficiencyThreshold) {
-                //   return "Insufficient or Irrelevant Information";
               } else if (
                 result["decision"] === "Insufficient" ||
                 result["max_prob"] < maxProbThreshold
@@ -562,13 +750,6 @@ export default function Home() {
                 return JSON.stringify(
                   {
                     decision: result["decision"],
-                    // overturn_likelihood: `${Math.round(
-                    //   result["overturn_likelihood"] * 100,
-                    //   2
-                    // )}%`,
-                    // inference_time: `${
-                    //   result["inference_time"].toFixed(3) * 1000
-                    // } ms`,
                     confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
                   },
                   null,
