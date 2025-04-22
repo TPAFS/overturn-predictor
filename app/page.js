@@ -502,7 +502,7 @@ export default function Home() {
                   onClick={() => setIntroState(response.next)}
                   className={`px-4 py-2 ${
                     response.primary
-                      ? "bg-gray-700 text-blue-400 hover:bg-gray-60"
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
                       : "bg-gray-700 text-gray-200 hover:bg-gray-600"
                   } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
@@ -528,10 +528,10 @@ export default function Home() {
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-3 py-1.5 ${
+                  className={`px-3 py-1 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-700 hover:bg-gray-700"
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
                   } rounded-md transition duration-200`}
                 >
                   {response.answer}
