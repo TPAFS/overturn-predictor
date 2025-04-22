@@ -26,6 +26,11 @@ const sampleSummaries = [
   //     "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
   // },
   {
+    title: "Pain Due to Sickle Cell",
+    summary: `The patient is a teenage male with medical history significant for sickle cell SS disease on a monthly transfusion program, with multiple PICU admissions, including admissions for pain crises and acute chest syndrome. He was referred to the ED for evaluation of abdominal pain. The pain initially started in his knee and shoulder the day prior. It migrated to his abdomen, was periumbilical in location, rate 6/10, and described as stabbing. It was unrelieved by Percocet and ibuprofen. The patient was diagnosed with sickle cell crisis with vasoocclusive abdominal pain, and admitted for further pain management. Admit orders included round-the-clock Toradol, maintenance IV fluids, Tylenol as needed for moderate pain, Dilaudid as needed for severe pain, ranitidine for GI (gastrointestinal) protection, folic acid, albuterol for his dry cough, and Hematology consultation. 
+The patient's pain was severe overnight, requiring Dilaudid in the morning. He was transfused as per his transfusion program. By the day of discharge, his pain had improved, and he had no tenderness on exam. He was deemed stable for discharge home, to follow-up with Hematology in one to two weeks and pediatrician in one to two days. The insurer denied the inpatient stay claiming it was not medically necessary, and care could have been provided at a lower level.`
+  },
+  {
     title: "Breast Cancer Screening",
     summary:
       "This is a patient who was denied breast tomosynthesis to screen for breast cancer.",
@@ -54,7 +59,7 @@ const sampleSummaries = [
     title: "ABA for Autism",
     summary:
       "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient’s parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
-  },
+  }
 ];
 
 const FAQ = () => {
