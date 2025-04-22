@@ -442,10 +442,6 @@ export default function Home() {
 
   const currentStep = introFlow.find((step) => step.id === introState);
 
-  const handleResponse = (nextState) => {
-    setIntroState(nextState);
-  };
-
   const handleOptionSelect = (option) => {
     const currentStep = introFlow.find((step) => step.id === introState);
     
