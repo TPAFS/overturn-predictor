@@ -248,6 +248,14 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
+  
+  // State for storing user responses
+  const [userResponses, setUserResponses] = useState({
+    hasDenial: null,
+    isUrgent: null,
+    insuranceType: null,
+    state: null
+  });
 
   const introFlow = [
     {
@@ -273,6 +281,9 @@ export default function Home() {
         Yes: "urgent_question",
         No: "message1",
       },
+      stateUpdate: (value) => ({
+        hasDenial: value === "Yes"
+      })
     },
     {
       id: "message1",
@@ -293,12 +304,15 @@ export default function Home() {
       options: ["Yes", "No"],
       responses: [
         { answer: "Back", next: "pre_auth_question", secondary: true },
-        { answer: "Continue", next: "question1", primary: true },
+        { answer: "Continue", next: "insurance_type", primary: true },
       ],
       optionActions: {
         Yes: "message2",
         No: "statement3",
       },
+      stateUpdate: (value) => ({
+        isUrgent: value === "Yes"
+      })
     },
     {
       id: "message2",
@@ -309,7 +323,7 @@ export default function Home() {
       ],
       responses: [
         { answer: "Return to Start", next: "initial", secondary: true },
-        { answer: "Continue Anyway", next: "question1", primary: true },
+        { answer: "Continue Anyway", next: "insurance_type", primary: true },
       ],
     },
     {
@@ -319,56 +333,57 @@ export default function Home() {
         "You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general advice is to appeal if you have the time and resources, as appeals are often overturned.",
         "If you are considering forgoing an appeal because you believe it is unlikely to be successful, use our model to update that belief.",
       ],
-      responses: [{ answer: "Ok, Proceed", next: "question1", primary: true }],
+      responses: [{ answer: "Ok, Proceed", next: "insurance_type", primary: true }],
     },
     {
-      id: "question1",
+      id: "insurance_type",
       title: "Insurance Type",
       stepNumber: 3,
       text: ["What type of insurance plan are you appealing against?"],
-      options: ["Employer", "Marketplace", "Medicare", "Medicaid"],
+      options: [
+        "Medicare",
+        "Medicaid",
+        "TRICARE",
+        "Employer Sponsored (fully insured)",
+        "Employer Sponsored (self funded)",
+        "Marketplace",
+        "CHIP",
+        "Other"
+      ],
       responses: [
         { answer: "Back", next: "urgent_question", secondary: true },
-        { answer: "Skip", next: "question2", primary: true },
+        { answer: "Continue", next: "questionsComplete", primary: true },
       ],
+      optionActions: {
+        "Marketplace": "marketplace_state",
+      },
+      stateUpdate: (value) => ({
+        insuranceType: value
+      })
     },
     {
-      id: "question2",
-      title: "Denial Reason",
+      id: "marketplace_state",
+      title: "Marketplace State",
       stepNumber: 4,
-      text: ["What was the primary reason for the coverage denial?"],
+      text: ["In which state did you purchase your Marketplace insurance?"],
       options: [
-        "Medical Necessity",
-        "Experimental/Investigational",
-        "Out of Network",
-        "Prior Authorization",
-        "Other",
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", 
+        "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", 
+        "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", 
+        "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
+        "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", 
+        "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
+        "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", 
+        "Wisconsin", "Wyoming", "District of Columbia"
       ],
       responses: [
-        { answer: "Back", next: "question1", secondary: true },
-        { answer: "Skip", next: "question3", primary: true },
+        { answer: "Back", next: "insurance_type", secondary: true },
+        { answer: "Continue", next: "questionsComplete", primary: true },
       ],
-    },
-    {
-      id: "question3",
-      title: "Case Details",
-      stepNumber: 5,
-      text: ["Do you have any of the following supporting elements?"],
-      checkboxes: [
-        "Doctor's letter of medical necessity",
-        "Peer-reviewed studies supporting the treatment",
-        "Second opinion from specialist",
-        "Similar cases that were approved",
-      ],
-      responses: [
-        { answer: "Back", next: "question2", secondary: true },
-        {
-          answer: "Continue to Case Summary",
-          next: "questionsComplete",
-          primary: true,
-        },
-      ],
-    },
+      stateUpdate: (value) => ({
+        state: value
+      })
+    }
   ];
 
   // Create a reference to the worker object.
@@ -418,6 +433,26 @@ export default function Home() {
 
   const handleResponse = (nextState) => {
     setIntroState(nextState);
+  };
+
+  const handleOptionSelect = (option) => {
+    const currentStep = introFlow.find((step) => step.id === introState);
+    
+    // Update user responses state if stateUpdate function exists
+    if (currentStep.stateUpdate) {
+      setUserResponses(prev => ({
+        ...prev,
+        ...currentStep.stateUpdate(option)
+      }));
+    }
+    
+    // Determine next state
+    const nextState = currentStep.optionActions?.[option] || 
+                      currentStep.responses.find((r) => r.primary)?.next;
+    
+    if (nextState) {
+      setIntroState(nextState);
+    }
   };
 
   const renderIntroFlowContent = () => {
@@ -501,8 +536,7 @@ export default function Home() {
         )}
 
         {/* Numbered question steps with options */}
-        {(currentStep.id === "question1" ||
-          currentStep.id === "question2" ||
+        {(currentStep.id === "insurance_type" ||
           currentStep.id === "pre_auth_question" ||
           currentStep.id === "urgent_question") && (
           <>
@@ -517,7 +551,6 @@ export default function Home() {
             <p className="text-slate-400 mb-6">{currentStep.text}</p>
             <div
               className={`grid grid-cols-1 ${
-                currentStep.id === "question1" ||
                 currentStep.id === "pre_auth_question" ||
                 currentStep.id === "urgent_question"
                   ? "md:grid-cols-2"
@@ -528,13 +561,7 @@ export default function Home() {
                 <button
                   key={option}
                   className="p-4 bg-gray-800 hover:bg-gray-700 text-white-100 rounded border border-gray-1000 transition duration-200 text-left"
-                  onClick={() => {
-                    // Use optionActions if available, otherwise use the primary response
-                    const nextState =
-                      currentStep.optionActions?.[option] ||
-                      currentStep.responses.find((r) => r.primary).next;
-                    setIntroState(nextState);
-                  }}
+                  onClick={() => handleOptionSelect(option)}
                 >
                   {option}
                 </button>
@@ -558,8 +585,8 @@ export default function Home() {
           </>
         )}
 
-        {/* Question with checkboxes */}
-        {currentStep.id === "question3" && (
+        {/* State selection for marketplace insurance */}
+        {currentStep.id === "marketplace_state" && (
           <>
             <div className="flex items-center mb-6">
               <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
@@ -570,22 +597,18 @@ export default function Home() {
               </h3>
             </div>
             <p className="text-slate-400 mb-6">{currentStep.text}</p>
-            <div className="space-y-3 mb-8">
-              {currentStep.checkboxes.map((option) => (
-                <div
-                  key={option}
-                  className="flex items-center p-4 bg-gray-800 rounded border border-gray-1000"
-                >
-                  <input
-                    type="checkbox"
-                    id={option}
-                    className="mr-3 h-5 w-5 accent-primary-500"
-                  />
-                  <label htmlFor={option} className="text-white-100">
+            <div className="mb-8">
+              <select
+                className="w-full p-4 bg-gray-800 text-white-100 rounded border border-gray-1000"
+                onChange={(e) => handleOptionSelect(e.target.value)}
+              >
+                <option value="" disabled selected>Select a state</option>
+                {currentStep.options.map((option) => (
+                  <option key={option} value={option}>
                     {option}
-                  </label>
-                </div>
-              ))}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex justify-between mt-6">
               {currentStep.responses.map((response, index) => (
@@ -660,6 +683,40 @@ export default function Home() {
 
         {introState === "questionsComplete" && (
           <div className="text-center flex flex-col items-center">
+            {/* Display user responses summary */}
+            <div className="w-[85vw] max-w-lg mb-6 p-4 bg-gray-800 rounded text-white-100 text-left">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-bold">Your Information:</h3>
+                <button 
+                  onClick={() => {
+                    setIntroState("initial");
+                    setUserResponses({
+                      hasDenial: null,
+                      isUrgent: null,
+                      insuranceType: null,
+                      state: null
+                    });
+                    setInput("");
+                    // Only reset the result, not the ready state
+                    if (result !== null) {
+                      setResult(null);
+                    }
+                  }}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white-100 text-sm rounded border border-gray-600 transition duration-200"
+                >
+                  Reset
+                </button>
+              </div>
+              <ul className="list-none">
+                <li><strong>Coverage Denied:</strong> {userResponses.hasDenial ? "Yes" : "No"}</li>
+                <li><strong>Urgent Situation:</strong> {userResponses.isUrgent ? "Yes" : "No"}</li>
+                <li><strong>Insurance Type:</strong> {userResponses.insuranceType || "Not specified"}</li>
+                {userResponses.insuranceType === "Marketplace" && (
+                  <li><strong>State:</strong> {userResponses.state || "Not specified"}</li>
+                )}
+              </ul>
+            </div>
+            
             <select
               className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
               defaultValue="default"
@@ -694,7 +751,7 @@ export default function Home() {
           </div>
         )}
 
-        {ready !== null && (
+        {ready !== null && introState === "questionsComplete" && (
           <pre
             className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
               result !== null ? getColorFromDecision(result) : ""
@@ -702,6 +759,9 @@ export default function Home() {
           >
             {(() => {
               if (!ready || !result) {
+                if (introState === "initial" || input.length < 5) {
+                  return "Enter a case description.";
+                }
                 return (
                   <div className="loading-container">
                     <p>Downloading model, please wait.</p>
