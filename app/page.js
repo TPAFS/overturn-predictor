@@ -866,7 +866,7 @@ export default function Home() {
 
         {ready !== null && introState === "questionsComplete" && (
           <pre
-            className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono ${
+            className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono whitespace-normal md:whitespace-pre break-words max-w-full ${
               result !== null ? getColorFromDecision(result) : ""
             }`}
           >
@@ -877,11 +877,15 @@ export default function Home() {
                 }
                 return (
                   <div className="loading-container">
-                    <p>Downloading model, please wait.</p>
-                    <p>This should take at most 10 seconds.</p>
-                    <center>
+                    <p className="text-sm sm:text-base">
+                      Downloading model, please wait.
+                    </p>
+                    <p className="text-sm sm:text-base">
+                      This should take at most 10 seconds.
+                    </p>
+                    <div className="flex justify-center">
                       <div className="lds-hourglass"></div>
-                    </center>
+                    </div>
                   </div>
                 );
               } else if (input.length < 5) {
@@ -889,14 +893,22 @@ export default function Home() {
               } else if (result["decision"] === "Insufficient Information") {
                 return "Insufficient Information For Model";
               } else {
-                return JSON.stringify(
-                  {
-                    decision: result["decision"],
-                    confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
-                  },
-                  null,
-                  2
-                );
+                // On mobile, format differently for better readability
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                  return `Decision: ${
+                    result["decision"]
+                  }\nConfidence: ${Math.round(result["max_prob"] * 100, 2)}%`;
+                } else {
+                  return JSON.stringify(
+                    {
+                      decision: result["decision"],
+                      confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
+                    },
+                    null,
+                    2
+                  );
+                }
               }
             })()}
           </pre>
