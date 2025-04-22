@@ -610,7 +610,7 @@ export default function Home() {
                 className="w-full p-4 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
                 onChange={(e) => handleOptionSelect(e.target.value)}
               >
-                <option value="" disabled selected>Select a state</option>
+                <option value="" disabled>Select a state</option>
                 {currentStep.options.map((option) => (
                   <option key={option} value={option}>
                     {option}
