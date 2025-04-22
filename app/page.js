@@ -261,7 +261,7 @@ export default function Home() {
     {
       id: "initial",
       text: [
-        "This tool helps predict the likelihood of success when appealing an insurance denial. Get data-driven insights based on historical appeal outcomes.",
+        "This tool helps predict the likelihood of success when appealing an insurance denial. Get dynamic outcome predictions based on historical appeal outcomes.",
       ],
       responses: [{ answer: "Start Assessment", next: "pre_auth_question" }],
     },
@@ -455,21 +455,22 @@ export default function Home() {
     }
   };
 
+
   const renderIntroFlowContent = () => {
     if (!currentStep) return null;
 
     return (
-      <div className="w-[85vw] max-w-lg mx-auto bg-gray-900 p-8 border border-gray-800 rounded">
+      <div className="w-[85vw] max-w-lg mx-auto bg-gray-900 p-6 border border-gray-800 rounded-lg shadow-sm">
         {/* Initial step (welcome screen) */}
         {currentStep.id === "initial" && (
           <>
-            <p className="text-slate-400 mb-8 text-center">
+            <p className="text-slate-400 mb-6 text-center">
               {currentStep.text}
             </p>
             <div className="flex justify-center">
               <button
                 onClick={() => setIntroState(currentStep.responses[0].next)}
-                className="px-6 py-3 bg-gray-800 text-white-100 font-medium rounded border border-gray-1000 hover:bg-gray-700 transition duration-200"
+                className="px-3 py-1 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               >
                 {currentStep.responses[0].answer}
               </button>
@@ -489,16 +490,16 @@ export default function Home() {
                 ></p>
               ))}
             </div>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-4 space-x-3">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 mx-2 ${
+                  className={`px-4 py-2 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-60"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
                   {response.answer}
                 </button>
@@ -517,16 +518,16 @@ export default function Home() {
                 </p>
               ))}
             </div>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 ${
+                  className={`px-3 py-1.5 ${
                     response.primary
                       ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      : "bg-gray-800 text-slate-400 border border-gray-700 hover:bg-gray-700"
+                  } rounded-md transition duration-200`}
                 >
                   {response.answer}
                 </button>
@@ -540,43 +541,43 @@ export default function Home() {
           currentStep.id === "pre_auth_question" ||
           currentStep.id === "urgent_question") && (
           <>
-            <div className="flex items-center mb-6">
-              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
                 {currentStep.stepNumber}
               </div>
-              <h3 className="text-xl font-bold text-slate-400">
+              <h3 className="text-lg font-medium text-slate-400">
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-6">{currentStep.text}</p>
+            <p className="text-slate-400 mb-5">{currentStep.text}</p>
             <div
               className={`grid grid-cols-1 ${
                 currentStep.id === "pre_auth_question" ||
                 currentStep.id === "urgent_question"
                   ? "md:grid-cols-2"
                   : ""
-              } gap-4 mb-8`}
+              } gap-3 mb-6`}
             >
               {currentStep.options.map((option) => (
                 <button
                   key={option}
-                  className="p-4 bg-gray-800 hover:bg-gray-700 text-white-100 rounded border border-gray-1000 transition duration-200 text-left"
+                  className="px-4 py-1 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded border border-gray-600 transition duration-200 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                   onClick={() => handleOptionSelect(option)}
                 >
                   {option}
                 </button>
               ))}
             </div>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
                   className={`px-4 py-2 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
                   {response.answer}
                 </button>
@@ -588,18 +589,18 @@ export default function Home() {
         {/* State selection for marketplace insurance */}
         {currentStep.id === "marketplace_state" && (
           <>
-            <div className="flex items-center mb-6">
-              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <div className="flex items-center mb-4">
+              <div className="bg-primary-500 text-white-100 rounded-full w-7 h-7 flex items-center justify-center mr-3 text-sm">
                 {currentStep.stepNumber}
               </div>
-              <h3 className="text-xl font-bold text-slate-400">
+              <h3 className="text-lg font-medium text-slate-400">
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-6">{currentStep.text}</p>
-            <div className="mb-8">
+            <p className="text-slate-400 mb-5">{currentStep.text}</p>
+            <div className="mb-6">
               <select
-                className="w-full p-4 bg-gray-800 text-white-100 rounded border border-gray-1000"
+                className="w-full p-4 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
                 onChange={(e) => handleOptionSelect(e.target.value)}
               >
                 <option value="" disabled selected>Select a state</option>
@@ -610,16 +611,16 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 ${
+                  className={`px-3 py-1 ${
                     response.primary
                       ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      : "bg-gray-800 text-slate-400 border border-gray-700 hover:bg-gray-700"
+                  } rounded-md transition duration-200 text-sm`}
                 >
                   {response.answer}
                 </button>
@@ -655,9 +656,9 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main className="flex flex-col items-center mt-24 mb-24 px-8">
+      <main className="flex flex-col items-center mt-20 mb-24 px-8">
         <div className="flex flex-col justify-between items-center">
-          <Title size="md" className="mb-10">
+          <Title size="md" className="mb-8">
             <GradientText className="from-slate-400 to-slate-600">
               Appeal Overturn Predictor
             </GradientText>
@@ -665,18 +666,17 @@ export default function Home() {
           <img
             src="/logo.jpeg"
             alt="Logo"
-            className="hidden md:block h-auto w-1/3 mx-4" // Adjusts height, keeps aspect ratio
+            className="hidden md:block h-auto w-1/3 mx-4 mb-2"
           />
         </div>
-        <h3 className="text-lg mt-4 mb-8 text-light text-center">
-          {" "}
+        <h3 className="text-md mt-2 mb-8 text-light text-center">
           Built by{" "}
           <a
-            className="underline text-primary-500 hover:text-primary-400 transition duration-200"
+                          className="text-primary-500 hover:text-primary-400 transition duration-200"
             href="https://persius.org"
           >
             Persius.
-          </a>{" "}
+          </a>
         </h3>
 
         {introState !== "questionsComplete" && renderIntroFlowContent()}
@@ -684,9 +684,9 @@ export default function Home() {
         {introState === "questionsComplete" && (
           <div className="text-center flex flex-col items-center">
             {/* Display user responses summary */}
-            <div className="w-[85vw] max-w-lg mb-6 p-4 bg-gray-800 rounded text-white-100 text-left">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-lg font-bold">Your Information:</h3>
+            <div className="w-[85vw] max-w-lg mb-6 p-4 bg-gray-800 rounded-lg text-gray-200 text-left border border-gray-700 shadow-sm">
+              <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-700">
+                <h3 className="text-sm font-medium text-gray-200">Your Information</h3>
                 <button 
                   onClick={() => {
                     setIntroState("initial");
@@ -697,28 +697,27 @@ export default function Home() {
                       state: null
                     });
                     setInput("");
-                    // Only reset the result, not the ready state
                     if (result !== null) {
                       setResult(null);
                     }
                   }}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white-100 text-sm rounded border border-gray-600 transition duration-200"
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-sm rounded border border-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
                   Reset
                 </button>
               </div>
-              <ul className="list-none">
-                <li><strong>Coverage Denied:</strong> {userResponses.hasDenial ? "Yes" : "No"}</li>
-                <li><strong>Urgent Situation:</strong> {userResponses.isUrgent ? "Yes" : "No"}</li>
-                <li><strong>Insurance Type:</strong> {userResponses.insuranceType || "Not specified"}</li>
+              <ul className="list-none text-sm space-y-1.5">
+                <li><span className="text-slate-400">Coverage Denied:</span> {userResponses.hasDenial ? "Yes" : "No"}</li>
+                <li><span className="text-slate-400">Urgent Situation:</span> {userResponses.isUrgent ? "Yes" : "No"}</li>
+                <li><span className="text-slate-400">Insurance Type:</span> {userResponses.insuranceType || "Not specified"}</li>
                 {userResponses.insuranceType === "Marketplace" && (
-                  <li><strong>State:</strong> {userResponses.state || "Not specified"}</li>
+                  <li><span className="text-slate-400">State:</span> {userResponses.state || "Not specified"}</li>
                 )}
               </ul>
             </div>
             
             <select
-              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
+              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
               defaultValue="default"
               onChange={(e) => {
                 setInput(e.target.value);
@@ -738,8 +737,8 @@ export default function Home() {
               ))}
             </select>
             <textarea
-              rows="8"
-              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
+              rows="9"
+              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
               placeholder="Enter a description of your coverage denial here..."
               maxLength="2000"
               value={input}
@@ -753,7 +752,7 @@ export default function Home() {
 
         {ready !== null && introState === "questionsComplete" && (
           <pre
-            className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
+            className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono ${
               result !== null ? getColorFromDecision(result) : ""
             }`}
           >
@@ -789,7 +788,7 @@ export default function Home() {
           </pre>
         )}
         <FAQ />
-        <p className="wrap mx-4 max-w-xl text-sm mt-16 mb-8 text-slate-400 text-center">
+        <p className="wrap mx-4 max-w-xl text-xs mt-12 mb-8 text-slate-400 text-center">
           <b>Disclaimer: </b>This is an informational self-help tool. Its
           outputs should not be interpreted as <i>advice</i> of any kind. You
           should only grant trust to its outputs as qualified by your own
@@ -801,7 +800,7 @@ export default function Home() {
           <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
             <a
               href="https://github.com/TPAFS/overturn-predictor"
-              style={{ textDecoration: "underline" }}
+              className="text-sm hover:underline"
             >
               View Source on Github
             </a>
