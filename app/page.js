@@ -1,28 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Details } from "./components/Details";
+
 import { GradientText } from "./components/GradientText";
 import { Title } from "./components/Title";
-import { Button } from "./components/Button";
-
-const sufficiencyThreshold = 0.005;
-const maxProbThreshold = 0.65;
-
-function getColorFromOverturnLiklihood(result) {
-  if (result > 0.7) {
-    return "border-x-teal-500";
-  } else if (result < 0.3) {
-    return "border-x-amber-500";
-  } else {
-    return "border-x-zinc-500";
-  }
-}
 
 function getColorFromDecision(result) {
-  if (result["max_prob"] < maxProbThreshold) {
-    return "border-x-zinc-500";
-  } else if (result["decision"] === "Overturned") {
+  if (result["decision"] === "Overturned") {
     return "border-x-teal-500";
   } else if (result["decision"] === "Upheld") {
     return "border-x-amber-500";
@@ -31,43 +15,37 @@ function getColorFromDecision(result) {
   }
 }
 
-function getColorFromProbs(outputProbs) {
-  const maxProb = Math.max(outputProbs[0], outputProbs[1], outputProbs[2]);
-  const argmax = outputProbs.indexOf(maxProb);
-  if (outputProbs[0] > sufficiencyThreshold) {
-    return "border-x-zinc-500";
-  } else if (argmax == 2) {
-    return "border-x-teal-500";
-  } else if (argmax == 1) {
-    return "border-x-amber-500";
-  }
-}
-
+// Updated sampleSummaries to include paragraphs with newlines
 const sampleSummaries = [
   {
     title: "Stomach Cancer Chemotherapy",
     summary: `This patient has extensive and inoperable carcinoma of the stomach. He was started on chemotherapy with Xeloda and Oxaliplatin, because he has less nausea with Oxaliplatin than with the alternative, Cisplatin. Oxaliplatin was denied as experimental for treatment of his gastric cancer.`,
   },
-  // {
-  //   title: "Non-small cell Lung Cancer Diagnostics",
-  //   summary:
-  //     "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
-  // },
+  {
+    title: "Pain Due to Sickle Cell",
+    summary: `The patient is a teenage male with medical history significant for sickle cell SS disease on a monthly transfusion program, with multiple PICU admissions, including admissions for pain crises and acute chest syndrome. He was referred to the ED for evaluation of abdominal pain. The pain initially started in his knee and shoulder the day prior. 
+
+It migrated to his abdomen, was periumbilical in location, rate 6/10, and described as stabbing. It was unrelieved by Percocet and ibuprofen. The patient was diagnosed with sickle cell crisis with vasoocclusive abdominal pain, and admitted for further pain management. 
+
+Admit orders included round-the-clock Toradol, maintenance IV fluids, Tylenol as needed for moderate pain, Dilaudid as needed for severe pain, ranitidine for GI (gastrointestinal) protection, folic acid, albuterol for his dry cough, and Hematology consultation. 
+
+The patient's pain was severe overnight, requiring Dilaudid in the morning. He was transfused as per his transfusion program. By the day of discharge, his pain had improved, and he had no tenderness on exam. He was deemed stable for discharge home, to follow-up with Hematology in one to two weeks and pediatrician in one to two days. The insurer denied the inpatient stay claiming it was not medically necessary, and care could have been provided at a lower level.`,
+  },
   {
     title: "Breast Cancer Screening",
     summary:
       "This is a patient who was denied breast tomosynthesis to screen for breast cancer.",
   },
   {
+    title: "ER Visit for Chest Pain",
+    summary:
+      "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day. My insurer denied the inpatient admission claiming it was not medically necessary.",
+  },
+  {
     title: "Humira Level Testing",
     summary:
       "This is a patient with Crohn's Disease who is being treated with Humira. Their health plan has denied Anser ADA blood level testing for Humira, claiming it is investigational.",
   },
-  // {
-  //   title: "ER Visit for Chest Pain",
-  //   summary:
-  //     "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
-  // },
   {
     title: "Breast Cancer Proton Beam",
     summary:
@@ -76,12 +54,17 @@ const sampleSummaries = [
   {
     title: "Speech and Language Therapy",
     summary:
-      "The patient is a 10-year-old female with a history of Pitt-Hopkins syndrome and associated motor planning difficulties, possible weakness in the oral area, and receptive and expressive language delays. The provider has recommended that the patient continue to receive individual speech and language therapy sessions twice a week for 60-minute sessions. The Health Insurer has denied the requested services as not medically necessary for treatment of the patient’s medical condition.",
+      "The patient is a 10-year-old female with a history of Pitt-Hopkins syndrome and associated motor planning difficulties, possible weakness in the oral area, and receptive and expressive language delays. The provider has recommended that the patient continue to receive individual speech and language therapy sessions twice a week for 60-minute sessions. The Health Insurer has denied the requested services as not medically necessary for treatment of the patient's medical condition.",
+  },
+  {
+    title: "Non-small cell Lung Cancer Diagnostics",
+    summary:
+      "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
   },
   {
     title: "ABA for Autism",
     summary:
-      "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient’s parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
+      "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient's parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
   },
 ];
 
@@ -120,7 +103,7 @@ const FAQ = () => {
       answer: [
         `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
         inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $550,000 in
+        support in such cases for free. In helping to resolve over $580,000 in
         inappropriate denials at zero cost since our formation, we've learned a thing or two about
         some of the most problematic insurance related barriers jeopardizing
         people's access to care.`,
@@ -196,9 +179,9 @@ const FAQ = () => {
         will happen in reality, not what should happen in an ideal reality.`,
         `While we aim to predict the expected outcome well,
         this expected outcome in itself reflects bias! You should never use this tool in any way that assumes it
-        is instead predicting whether an appeal should or ought to be overturned. This is not problem the model
+        is instead predicting whether an appeal should or ought to be overturned. This is not the problem the model
         was designed to address, and using this model for that problem runs the grave risk of propagating
-        harmful, existing bias.`,
+        harmful, existing bias. As a simple example, try swapping 'male' with 'female' in some of the preloaded examples.`,
       ],
     },
     {
@@ -277,11 +260,19 @@ export default function Home() {
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
 
+  // State for storing user responses
+  const [userResponses, setUserResponses] = useState({
+    hasDenial: null,
+    isUrgent: null,
+    insuranceType: null,
+    state: null,
+  });
+
   const introFlow = [
     {
       id: "initial",
       text: [
-        "This tool helps predict the likelihood of success when appealing an insurance denial. Get data-driven insights based on historical appeal outcomes.",
+        "This tool helps predict the likelihood of success when appealing an insurance denial. Get dynamic outcome predictions based on historical appeal outcomes.",
       ],
       responses: [{ answer: "Start Assessment", next: "pre_auth_question" }],
     },
@@ -301,6 +292,9 @@ export default function Home() {
         Yes: "urgent_question",
         No: "message1",
       },
+      stateUpdate: (value) => ({
+        hasDenial: value === "Yes",
+      }),
     },
     {
       id: "message1",
@@ -321,12 +315,15 @@ export default function Home() {
       options: ["Yes", "No"],
       responses: [
         { answer: "Back", next: "pre_auth_question", secondary: true },
-        { answer: "Continue", next: "question1", primary: true },
+        { answer: "Continue", next: "insurance_type", primary: true },
       ],
       optionActions: {
         Yes: "message2",
         No: "statement3",
       },
+      stateUpdate: (value) => ({
+        isUrgent: value === "Yes",
+      }),
     },
     {
       id: "message2",
@@ -337,7 +334,7 @@ export default function Home() {
       ],
       responses: [
         { answer: "Return to Start", next: "initial", secondary: true },
-        { answer: "Continue Anyway", next: "question1", primary: true },
+        { answer: "Continue Anyway", next: "insurance_type", primary: true },
       ],
     },
     {
@@ -347,55 +344,101 @@ export default function Home() {
         "You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general advice is to appeal if you have the time and resources, as appeals are often overturned.",
         "If you are considering forgoing an appeal because you believe it is unlikely to be successful, use our model to update that belief.",
       ],
-      responses: [{ answer: "Ok, Proceed", next: "question1", primary: true }],
+      responses: [
+        { answer: "Ok, Proceed", next: "insurance_type", primary: true },
+      ],
     },
     {
-      id: "question1",
+      id: "insurance_type",
       title: "Insurance Type",
       stepNumber: 3,
       text: ["What type of insurance plan are you appealing against?"],
-      options: ["Employer", "Marketplace", "Medicare", "Medicaid"],
-      responses: [
-        { answer: "Back", next: "urgent_question", secondary: true },
-        { answer: "Skip", next: "question2", primary: true },
-      ],
-    },
-    {
-      id: "question2",
-      title: "Denial Reason",
-      stepNumber: 4,
-      text: ["What was the primary reason for the coverage denial?"],
       options: [
-        "Medical Necessity",
-        "Experimental/Investigational",
-        "Out of Network",
-        "Prior Authorization",
+        "Medicare",
+        "Medicaid",
+        "TRICARE",
+        "Employer Sponsored (fully insured)",
+        "Employer Sponsored (self funded)",
+        "Marketplace",
+        "CHIP",
         "Other",
       ],
       responses: [
-        { answer: "Back", next: "question1", secondary: true },
-        { answer: "Skip", next: "question3", primary: true },
+        { answer: "Back", next: "urgent_question", secondary: true },
+        { answer: "Continue", next: "questionsComplete", primary: true },
       ],
+      optionActions: {
+        Marketplace: "marketplace_state",
+      },
+      stateUpdate: (value) => ({
+        insuranceType: value,
+      }),
     },
     {
-      id: "question3",
-      title: "Case Details",
-      stepNumber: 5,
-      text: ["Do you have any of the following supporting elements?"],
-      checkboxes: [
-        "Doctor's letter of medical necessity",
-        "Peer-reviewed studies supporting the treatment",
-        "Second opinion from specialist",
-        "Similar cases that were approved",
+      id: "marketplace_state",
+      title: "Marketplace State",
+      stepNumber: 4,
+      text: ["In which state did you purchase your Marketplace insurance?"],
+      options: [
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+        "District of Columbia",
       ],
       responses: [
-        { answer: "Back", next: "question2", secondary: true },
-        {
-          answer: "Continue to Case Summary",
-          next: "questionsComplete",
-          primary: true,
-        },
+        { answer: "Back", next: "insurance_type", secondary: true },
+        { answer: "Continue", next: "questionsComplete", primary: true },
       ],
+      stateUpdate: (value) => ({
+        state: value,
+      }),
     },
   ];
 
@@ -434,35 +477,92 @@ export default function Home() {
       worker.current.removeEventListener("message", onMessageReceived);
   });
 
-  const classify = useCallback((text) => {
-    if (worker.current) {
-      worker.current.postMessage({ text });
+  // Function to determine insurance type and jurisdiction IDs
+  const getTypeAndJurisdictionIds = () => {
+    // Determine insurance_type_id
+    let insurance_type_id = 2; // Default for other/null cases
+
+    if (userResponses.insuranceType) {
+      const commercialTypes = [
+        "Employer Sponsored (fully insured)",
+        "Employer Sponsored (self funded)",
+        "Marketplace",
+      ];
+
+      if (commercialTypes.includes(userResponses.insuranceType)) {
+        insurance_type_id = 0; // Commercial types
+      } else if (userResponses.insuranceType === "Medicaid") {
+        insurance_type_id = 1; // Medicaid
+      }
     }
-  }, []);
+
+    // Determine jurisdiction_id
+    let jurisdiction_id = 2; // Default for other states
+
+    if (userResponses.state === "New York") {
+      jurisdiction_id = 0;
+    } else if (userResponses.state === "California") {
+      jurisdiction_id = 1;
+    }
+
+    return { insurance_type_id, jurisdiction_id };
+  };
+
+  const classify = useCallback(
+    (text) => {
+      if (worker.current) {
+        const { jurisdiction_id, insurance_type_id } =
+          getTypeAndJurisdictionIds();
+        worker.current.postMessage({
+          text,
+          jurisdiction_id,
+          insurance_type_id,
+        });
+      }
+    },
+    [userResponses]
+  );
 
   const [introState, setIntroState] = useState("initial");
 
   const currentStep = introFlow.find((step) => step.id === introState);
 
-  const handleResponse = (nextState) => {
-    setIntroState(nextState);
+  const handleOptionSelect = (option) => {
+    const currentStep = introFlow.find((step) => step.id === introState);
+
+    // Update user responses state if stateUpdate function exists
+    if (currentStep.stateUpdate) {
+      setUserResponses((prev) => ({
+        ...prev,
+        ...currentStep.stateUpdate(option),
+      }));
+    }
+
+    // Determine next state
+    const nextState =
+      currentStep.optionActions?.[option] ||
+      currentStep.responses.find((r) => r.primary)?.next;
+
+    if (nextState) {
+      setIntroState(nextState);
+    }
   };
 
   const renderIntroFlowContent = () => {
     if (!currentStep) return null;
 
     return (
-      <div className="w-[85vw] max-w-lg mx-auto bg-gray-900 p-8 border border-gray-800 rounded">
+      <div className="w-[85vw] max-w-lg mx-auto bg-gray-900 p-6 border border-gray-800 rounded-lg shadow-sm">
         {/* Initial step (welcome screen) */}
         {currentStep.id === "initial" && (
           <>
-            <p className="text-slate-400 mb-8 text-center">
+            <p className="text-slate-400 mb-6 text-center">
               {currentStep.text}
             </p>
             <div className="flex justify-center">
               <button
                 onClick={() => setIntroState(currentStep.responses[0].next)}
-                className="px-6 py-3 bg-gray-800 text-white-100 font-medium rounded border border-gray-1000 hover:bg-gray-700 transition duration-200"
+                className="px-3 py-1 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
               >
                 {currentStep.responses[0].answer}
               </button>
@@ -470,28 +570,28 @@ export default function Home() {
           </>
         )}
 
-        {/* Message or info screens */}
+        {/* Message or info screens - UPDATED STYLING */}
         {(currentStep.id === "message1" || currentStep.id === "message2") && (
           <>
             <div className="mb-6">
               {currentStep.message.map((message, idx) => (
                 <p
                   key={idx}
-                  className="text-slate-400 mb-4 text-center"
+                  className="text-slate-400 mb-4 text-left leading-relaxed px-2"
                   dangerouslySetInnerHTML={{ __html: message }}
                 ></p>
               ))}
             </div>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-4 space-x-3">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 mx-2 ${
+                  className={`px-4 py-2 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
                   {response.answer}
                 </button>
@@ -500,26 +600,29 @@ export default function Home() {
           </>
         )}
 
-        {/* Statement screen */}
+        {/* Statement screen - UPDATED STYLING */}
         {currentStep.id === "statement3" && (
           <>
             <div className="mb-6">
               {currentStep.text.map((statement, idx) => (
-                <p key={idx} className="text-slate-400 mb-4 text-center">
+                <p
+                  key={idx}
+                  className="text-slate-400 mb-4 text-left leading-relaxed px-2"
+                >
                   {statement}
                 </p>
               ))}
             </div>
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 ${
+                  className={`px-3 py-1 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded-md transition duration-200`}
                 >
                   {response.answer}
                 </button>
@@ -529,55 +632,47 @@ export default function Home() {
         )}
 
         {/* Numbered question steps with options */}
-        {(currentStep.id === "question1" ||
-          currentStep.id === "question2" ||
+        {(currentStep.id === "insurance_type" ||
           currentStep.id === "pre_auth_question" ||
           currentStep.id === "urgent_question") && (
           <>
-            <div className="flex items-center mb-6">
-              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
                 {currentStep.stepNumber}
               </div>
-              <h3 className="text-xl font-bold text-slate-400">
+              <h3 className="text-lg font-medium text-slate-400">
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-6">{currentStep.text}</p>
+            <p className="text-slate-400 mb-5 px-2">{currentStep.text}</p>
             <div
               className={`grid grid-cols-1 ${
-                currentStep.id === "question1" ||
                 currentStep.id === "pre_auth_question" ||
                 currentStep.id === "urgent_question"
                   ? "md:grid-cols-2"
                   : ""
-              } gap-4 mb-8`}
+              } gap-3 mb-6`}
             >
               {currentStep.options.map((option) => (
                 <button
                   key={option}
-                  className="p-4 bg-gray-800 hover:bg-gray-700 text-white-100 rounded border border-gray-1000 transition duration-200 text-left"
-                  onClick={() => {
-                    // Use optionActions if available, otherwise use the primary response
-                    const nextState =
-                      currentStep.optionActions?.[option] ||
-                      currentStep.responses.find((r) => r.primary).next;
-                    setIntroState(nextState);
-                  }}
+                  className="px-4 py-1 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded border border-gray-600 transition duration-200 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                  onClick={() => handleOptionSelect(option)}
                 >
                   {option}
                 </button>
               ))}
             </div>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
                   className={`px-4 py-2 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
                 >
                   {response.answer}
                 </button>
@@ -586,45 +681,43 @@ export default function Home() {
           </>
         )}
 
-        {/* Question with checkboxes */}
-        {currentStep.id === "question3" && (
+        {/* State selection for marketplace insurance */}
+        {currentStep.id === "marketplace_state" && (
           <>
-            <div className="flex items-center mb-6">
-              <div className="bg-primary-500 text-white-100 rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
                 {currentStep.stepNumber}
               </div>
-              <h3 className="text-xl font-bold text-slate-400">
+              <h3 className="text-lg font-medium text-slate-400">
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-6">{currentStep.text}</p>
-            <div className="space-y-3 mb-8">
-              {currentStep.checkboxes.map((option) => (
-                <div
-                  key={option}
-                  className="flex items-center p-4 bg-gray-800 rounded border border-gray-1000"
-                >
-                  <input
-                    type="checkbox"
-                    id={option}
-                    className="mr-3 h-5 w-5 accent-primary-500"
-                  />
-                  <label htmlFor={option} className="text-white-100">
+            <p className="text-slate-400 mb-5 px-2">{currentStep.text}</p>
+            <div className="mb-6">
+              <select
+                className="w-full px-4 py-1 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
+                onChange={(e) => handleOptionSelect(e.target.value)}
+              >
+                <option value="" disabled>
+                  Select a state
+                </option>
+                {currentStep.options.map((option) => (
+                  <option key={option} value={option}>
                     {option}
-                  </label>
-                </div>
-              ))}
+                  </option>
+                ))}
+              </select>
             </div>
-            <div className="flex justify-between mt-6">
+            <div className="flex justify-between mt-4">
               {currentStep.responses.map((response, index) => (
                 <button
                   key={index}
                   onClick={() => setIntroState(response.next)}
-                  className={`px-4 py-2 ${
+                  className={`px-3 py-1 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-1000 hover:bg-gray-700"
-                  } rounded transition duration-200`}
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                  } rounded-md transition duration-200 text-sm`}
                 >
                   {response.answer}
                 </button>
@@ -660,9 +753,9 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main className="flex flex-col items-center mt-24 mb-24 px-8">
+      <main className="flex flex-col items-center mt-20 mb-24 px-8">
         <div className="flex flex-col justify-between items-center">
-          <Title size="md" className="mb-10">
+          <Title size="md" className="mb-8">
             <GradientText className="from-slate-400 to-slate-600">
               Appeal Overturn Predictor
             </GradientText>
@@ -670,26 +763,72 @@ export default function Home() {
           <img
             src="/logo.jpeg"
             alt="Logo"
-            className="hidden md:block h-auto w-1/3 mx-4" // Adjusts height, keeps aspect ratio
+            className="hidden md:block h-auto w-1/3 mx-4 mb-2"
           />
         </div>
-        <h3 className="text-lg mt-4 mb-8 text-light text-center">
-          {" "}
+        <h3 className="text-md mt-2 mb-8 text-light text-center">
           Built by{" "}
           <a
-            className="underline text-primary-500 hover:text-primary-400 transition duration-200"
+            className="text-primary-500 hover:text-primary-400 transition duration-200"
             href="https://persius.org"
           >
             Persius.
-          </a>{" "}
+          </a>
         </h3>
 
         {introState !== "questionsComplete" && renderIntroFlowContent()}
 
         {introState === "questionsComplete" && (
           <div className="text-center flex flex-col items-center">
+            {/* Display user responses summary */}
+            <div className="w-[85vw] max-w-lg mb-6 p-4 bg-gray-800 rounded-lg text-gray-200 text-left border border-gray-700 shadow-sm">
+              <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-700">
+                <h3 className="text-sm font-medium text-gray-200">
+                  Your Information
+                </h3>
+                <button
+                  onClick={() => {
+                    setIntroState("initial");
+                    setUserResponses({
+                      hasDenial: null,
+                      isUrgent: null,
+                      insuranceType: null,
+                      state: null,
+                    });
+                    setInput("");
+                    if (result !== null) {
+                      setResult(null);
+                    }
+                  }}
+                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-200 text-sm rounded border border-gray-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                  Reset
+                </button>
+              </div>
+              <ul className="list-none text-sm space-y-1.5">
+                <li>
+                  <span className="text-slate-400">Coverage Denied:</span>{" "}
+                  {userResponses.hasDenial ? "Yes" : "No"}
+                </li>
+                <li>
+                  <span className="text-slate-400">Urgent Situation:</span>{" "}
+                  {userResponses.isUrgent ? "Yes" : "No"}
+                </li>
+                <li>
+                  <span className="text-slate-400">Insurance Type:</span>{" "}
+                  {userResponses.insuranceType || "Not specified"}
+                </li>
+                {userResponses.insuranceType === "Marketplace" && (
+                  <li>
+                    <span className="text-slate-400">State:</span>{" "}
+                    {userResponses.state || "Not specified"}
+                  </li>
+                )}
+              </ul>
+            </div>
+
             <select
-              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4"
+              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
               defaultValue="default"
               onChange={(e) => {
                 setInput(e.target.value);
@@ -708,9 +847,11 @@ export default function Home() {
                 </option>
               ))}
             </select>
+
+            {/* CHANGE 2: Updated textarea to properly handle multiple paragraphs */}
             <textarea
-              rows="8"
-              className="m-4 input-xl w-[85vw] p-4 max-w-lg h-full bg-gray-800 border border-gray-1000 text-white-100 rounded mb-4 resize-none"
+              rows="9"
+              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500 whitespace-pre-line text-left"
               placeholder="Enter a description of your coverage denial here..."
               maxLength="2000"
               value={input}
@@ -718,49 +859,62 @@ export default function Home() {
                 setInput(e.target.value);
                 classify(e.target.value);
               }}
+              style={{ whiteSpace: "pre-line" }}
             />
           </div>
         )}
 
-        {ready !== null && (
+        {ready !== null && introState === "questionsComplete" && (
           <pre
-            className={`mx-2 mt-8 bg-gray-800 text-white-100 p-2 border-gray-900 rounded border-8 ${
+            className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono whitespace-normal md:whitespace-pre break-words max-w-full ${
               result !== null ? getColorFromDecision(result) : ""
             }`}
           >
             {(() => {
               if (!ready || !result) {
+                if (introState === "initial" || input.length < 5) {
+                  return "Enter a case description.";
+                }
                 return (
                   <div className="loading-container">
-                    <p>Downloading model, please wait.</p>
-                    <p>This should take at most 10 seconds.</p>
-                    <center>
+                    <p className="text-sm sm:text-base">
+                      Downloading model, please wait.
+                    </p>
+                    <p className="text-sm sm:text-base">
+                      This should take at most 10 seconds.
+                    </p>
+                    <div className="flex justify-center">
                       <div className="lds-hourglass"></div>
-                    </center>
+                    </div>
                   </div>
                 );
               } else if (input.length < 5) {
                 return "Enter a case description.";
-              } else if (
-                result["decision"] === "Insufficient" ||
-                result["max_prob"] < maxProbThreshold
-              ) {
+              } else if (result["decision"] === "Insufficient Information") {
                 return "Insufficient Information For Model";
               } else {
-                return JSON.stringify(
-                  {
-                    decision: result["decision"],
-                    confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
-                  },
-                  null,
-                  2
-                );
+                // On mobile, format differently for better readability
+                const isMobile = window.innerWidth < 768;
+                if (isMobile) {
+                  return `Decision: ${
+                    result["decision"]
+                  }\nConfidence: ${Math.round(result["max_prob"] * 100, 2)}%`;
+                } else {
+                  return JSON.stringify(
+                    {
+                      decision: result["decision"],
+                      confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
+                    },
+                    null,
+                    2
+                  );
+                }
               }
             })()}
           </pre>
         )}
         <FAQ />
-        <p className="wrap mx-4 max-w-xl text-sm mt-16 mb-8 text-slate-400 text-center">
+        <p className="wrap mx-4 max-w-xl text-xs mt-12 mb-8 text-slate-400 text-center">
           <b>Disclaimer: </b>This is an informational self-help tool. Its
           outputs should not be interpreted as <i>advice</i> of any kind. You
           should only grant trust to its outputs as qualified by your own
@@ -772,7 +926,7 @@ export default function Home() {
           <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row text-primary-500">
             <a
               href="https://github.com/TPAFS/overturn-predictor"
-              style={{ textDecoration: "underline" }}
+              className="text-sm hover:underline"
             >
               View Source on Github
             </a>
