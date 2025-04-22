@@ -685,7 +685,7 @@ export default function Home() {
         {currentStep.id === "marketplace_state" && (
           <>
             <div className="flex items-center mb-4">
-              <div className="bg-primary-500 text-white-100 rounded-full w-7 h-7 flex items-center justify-center mr-3 text-sm">
+              <div className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
                 {currentStep.stepNumber}
               </div>
               <h3 className="text-lg font-medium text-slate-400">
@@ -695,7 +695,7 @@ export default function Home() {
             <p className="text-slate-400 mb-5 px-2">{currentStep.text}</p>
             <div className="mb-6">
               <select
-                className="w-full p-4 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
+                className="w-full px-4 py-1 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
                 onChange={(e) => handleOptionSelect(e.target.value)}
               >
                 <option value="" disabled>
@@ -715,8 +715,8 @@ export default function Home() {
                   onClick={() => setIntroState(response.next)}
                   className={`px-3 py-1 ${
                     response.primary
-                      ? "bg-primary-500 text-white-100 border border-primary-600 hover:bg-primary-400"
-                      : "bg-gray-800 text-slate-400 border border-gray-700 hover:bg-gray-700"
+                      ? "bg-gray-700 text-blue-400 hover:bg-gray-600"
+                      : "bg-gray-700 text-gray-200 hover:bg-gray-600"
                   } rounded-md transition duration-200 text-sm`}
                 >
                   {response.answer}
