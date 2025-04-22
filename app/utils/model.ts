@@ -10,7 +10,7 @@ export async function loadModelSession() {
   };
   
   try {
-    console.log("Loading model with options:", sessionOptions);
+    // console.log("Loading model with options:", sessionOptions);
     const modelUrl = "/three_class_models/quant-model.onnx"
     const response = await fetch(modelUrl);
     const arrayBuffer = await response.arrayBuffer();
