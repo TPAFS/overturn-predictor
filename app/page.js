@@ -1,45 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Details } from "./components/Details";
+
 import { GradientText } from "./components/GradientText";
 import { Title } from "./components/Title";
-import { Button } from "./components/Button";
-
-const sufficiencyThreshold = 0.005;
-const maxProbThreshold = 0.65;
-
-function getColorFromOverturnLiklihood(result) {
-  if (result > 0.7) {
-    return "border-x-teal-500";
-  } else if (result < 0.3) {
-    return "border-x-amber-500";
-  } else {
-    return "border-x-zinc-500";
-  }
-}
 
 function getColorFromDecision(result) {
-  if (result["max_prob"] < maxProbThreshold) {
-    return "border-x-zinc-500";
-  } else if (result["decision"] === "Overturned") {
+  if (result["decision"] === "Overturned") {
     return "border-x-teal-500";
   } else if (result["decision"] === "Upheld") {
     return "border-x-amber-500";
   } else {
     return "border-x-zinc-500";
-  }
-}
-
-function getColorFromProbs(outputProbs) {
-  const maxProb = Math.max(outputProbs[0], outputProbs[1], outputProbs[2]);
-  const argmax = outputProbs.indexOf(maxProb);
-  if (outputProbs[0] > sufficiencyThreshold) {
-    return "border-x-zinc-500";
-  } else if (argmax == 2) {
-    return "border-x-teal-500";
-  } else if (argmax == 1) {
-    return "border-x-amber-500";
   }
 }
 
@@ -120,7 +92,7 @@ const FAQ = () => {
       answer: [
         `<a href="https://persius.org" style="color: #6F495C; text-decoration: underline;">Persius</a> is an organization that builds AI to help people resolve
         inappropriate health insurance coverage denials, and provides human
-        support in such cases for free. In helping to resolve over $550,000 in
+        support in such cases for free. In helping to resolve over $580,000 in
         inappropriate denials at zero cost since our formation, we've learned a thing or two about
         some of the most problematic insurance related barriers jeopardizing
         people's access to care.`,
@@ -196,9 +168,9 @@ const FAQ = () => {
         will happen in reality, not what should happen in an ideal reality.`,
         `While we aim to predict the expected outcome well,
         this expected outcome in itself reflects bias! You should never use this tool in any way that assumes it
-        is instead predicting whether an appeal should or ought to be overturned. This is not problem the model
+        is instead predicting whether an appeal should or ought to be overturned. This is not the problem the model
         was designed to address, and using this model for that problem runs the grave risk of propagating
-        harmful, existing bias.`,
+        harmful, existing bias. As a simple example, try swapping 'male' with 'female' in some of the preloaded examples.`,
       ],
     },
     {
@@ -741,10 +713,7 @@ export default function Home() {
                 );
               } else if (input.length < 5) {
                 return "Enter a case description.";
-              } else if (
-                result["decision"] === "Insufficient" ||
-                result["max_prob"] < maxProbThreshold
-              ) {
+              } else if (result["decision"] === "Insufficient Information") {
                 return "Insufficient Information For Model";
               } else {
                 return JSON.stringify(

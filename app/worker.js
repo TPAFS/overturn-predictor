@@ -36,11 +36,13 @@ self.addEventListener("message", async (event) => {
   }
 
   // Model inference
-  let { input_ids, attention_mask } = await cachedTokenizer(event.data.text);
+  let { input_ids, attention_mask } = await cachedTokenizer(event.data.text, {padding: true, truncation: true});
   let [outputProbs, time] = await runInference(
     cachedModelSession,
     input_ids,
-    attention_mask
+    attention_mask,
+    2, // jurisdiction_id (default: Unspecified)
+    2  // insurance_type_id (default: Unspecified)
   );
 
   // Get prediction
