@@ -1,7 +1,7 @@
 import * as ort from "onnxruntime-web";
 
 export async function loadModelSession() {
-  const sessionOptions = {
+  const sessionOptions: ort.InferenceSession.SessionOptions = {
     executionProviders: ["wasm"],
     graphOptimizationLevel: "all",
     enableCpuMemArena: true,
@@ -11,8 +11,12 @@ export async function loadModelSession() {
   
   try {
     console.log("Loading model with options:", sessionOptions);
+    const modelUrl = "/three_class_models/quant-model.onnx"
+    const response = await fetch(modelUrl);
+    const arrayBuffer = await response.arrayBuffer();
+    const modelBytes = new Uint8Array(arrayBuffer);
     const session = await ort.InferenceSession.create(
-      "/three_class_models/quant-model.onnx",
+      modelBytes,
       sessionOptions
     );
     console.log("Model loaded successfully");
@@ -45,7 +49,7 @@ export async function runInference(
       [1]
     ),
   };
-  
+
   const outputData = await session.run(feeds);
   const end = performance.now();
   const inferenceTime = (end - start) / 1000;
