@@ -15,19 +15,20 @@ function getColorFromDecision(result) {
   }
 }
 
+// Updated sampleSummaries to include paragraphs with newlines
 const sampleSummaries = [
   {
     title: "Stomach Cancer Chemotherapy",
     summary: `This patient has extensive and inoperable carcinoma of the stomach. He was started on chemotherapy with Xeloda and Oxaliplatin, because he has less nausea with Oxaliplatin than with the alternative, Cisplatin. Oxaliplatin was denied as experimental for treatment of his gastric cancer.`,
   },
-  // {
-  //   title: "Non-small cell Lung Cancer Diagnostics",
-  //   summary:
-  //     "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
-  // },
   {
     title: "Pain Due to Sickle Cell",
-    summary: `The patient is a teenage male with medical history significant for sickle cell SS disease on a monthly transfusion program, with multiple PICU admissions, including admissions for pain crises and acute chest syndrome. He was referred to the ED for evaluation of abdominal pain. The pain initially started in his knee and shoulder the day prior. It migrated to his abdomen, was periumbilical in location, rate 6/10, and described as stabbing. It was unrelieved by Percocet and ibuprofen. The patient was diagnosed with sickle cell crisis with vasoocclusive abdominal pain, and admitted for further pain management. Admit orders included round-the-clock Toradol, maintenance IV fluids, Tylenol as needed for moderate pain, Dilaudid as needed for severe pain, ranitidine for GI (gastrointestinal) protection, folic acid, albuterol for his dry cough, and Hematology consultation. 
+    summary: `The patient is a teenage male with medical history significant for sickle cell SS disease on a monthly transfusion program, with multiple PICU admissions, including admissions for pain crises and acute chest syndrome. He was referred to the ED for evaluation of abdominal pain. The pain initially started in his knee and shoulder the day prior. 
+
+It migrated to his abdomen, was periumbilical in location, rate 6/10, and described as stabbing. It was unrelieved by Percocet and ibuprofen. The patient was diagnosed with sickle cell crisis with vasoocclusive abdominal pain, and admitted for further pain management. 
+
+Admit orders included round-the-clock Toradol, maintenance IV fluids, Tylenol as needed for moderate pain, Dilaudid as needed for severe pain, ranitidine for GI (gastrointestinal) protection, folic acid, albuterol for his dry cough, and Hematology consultation. 
+
 The patient's pain was severe overnight, requiring Dilaudid in the morning. He was transfused as per his transfusion program. By the day of discharge, his pain had improved, and he had no tenderness on exam. He was deemed stable for discharge home, to follow-up with Hematology in one to two weeks and pediatrician in one to two days. The insurer denied the inpatient stay claiming it was not medically necessary, and care could have been provided at a lower level.`
   },
   {
@@ -35,16 +36,16 @@ The patient's pain was severe overnight, requiring Dilaudid in the morning. He w
     summary:
       "This is a patient who was denied breast tomosynthesis to screen for breast cancer.",
   },
+    {
+    title: "ER Visit for Chest Pain",
+    summary:
+      "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day. My insurer denied the inpatient admission claiming it was not medically necessary.",
+  },
   {
     title: "Humira Level Testing",
     summary:
       "This is a patient with Crohn's Disease who is being treated with Humira. Their health plan has denied Anser ADA blood level testing for Humira, claiming it is investigational.",
   },
-  // {
-  //   title: "ER Visit for Chest Pain",
-  //   summary:
-  //     "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day.",
-  // },
   {
     title: "Breast Cancer Proton Beam",
     summary:
@@ -53,12 +54,17 @@ The patient's pain was severe overnight, requiring Dilaudid in the morning. He w
   {
     title: "Speech and Language Therapy",
     summary:
-      "The patient is a 10-year-old female with a history of Pitt-Hopkins syndrome and associated motor planning difficulties, possible weakness in the oral area, and receptive and expressive language delays. The provider has recommended that the patient continue to receive individual speech and language therapy sessions twice a week for 60-minute sessions. The Health Insurer has denied the requested services as not medically necessary for treatment of the patient’s medical condition.",
+      "The patient is a 10-year-old female with a history of Pitt-Hopkins syndrome and associated motor planning difficulties, possible weakness in the oral area, and receptive and expressive language delays. The provider has recommended that the patient continue to receive individual speech and language therapy sessions twice a week for 60-minute sessions. The Health Insurer has denied the requested services as not medically necessary for treatment of the patient's medical condition.",
+  },
+    {
+    title: "Non-small cell Lung Cancer Diagnostics",
+    summary:
+      "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
   },
   {
     title: "ABA for Autism",
     summary:
-      "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient’s parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
+      "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient's parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
   }
 ];
 
@@ -483,14 +489,14 @@ export default function Home() {
           </>
         )}
 
-        {/* Message or info screens */}
+        {/* Message or info screens - UPDATED STYLING */}
         {(currentStep.id === "message1" || currentStep.id === "message2") && (
           <>
             <div className="mb-6">
               {currentStep.message.map((message, idx) => (
                 <p
                   key={idx}
-                  className="text-slate-400 mb-4 text-center"
+                  className="text-slate-400 mb-4 text-left leading-relaxed px-2"
                   dangerouslySetInnerHTML={{ __html: message }}
                 ></p>
               ))}
@@ -513,12 +519,12 @@ export default function Home() {
           </>
         )}
 
-        {/* Statement screen */}
+        {/* Statement screen - UPDATED STYLING */}
         {currentStep.id === "statement3" && (
           <>
             <div className="mb-6">
               {currentStep.text.map((statement, idx) => (
-                <p key={idx} className="text-slate-400 mb-4 text-center">
+                <p key={idx} className="text-slate-400 mb-4 text-left leading-relaxed px-2">
                   {statement}
                 </p>
               ))}
@@ -554,7 +560,7 @@ export default function Home() {
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-5">{currentStep.text}</p>
+            <p className="text-slate-400 mb-5 px-2">{currentStep.text}</p>
             <div
               className={`grid grid-cols-1 ${
                 currentStep.id === "pre_auth_question" ||
@@ -602,7 +608,7 @@ export default function Home() {
                 {currentStep.title}
               </h3>
             </div>
-            <p className="text-slate-400 mb-5">{currentStep.text}</p>
+            <p className="text-slate-400 mb-5 px-2">{currentStep.text}</p>
             <div className="mb-6">
               <select
                 className="w-full p-4 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
@@ -677,7 +683,7 @@ export default function Home() {
         <h3 className="text-md mt-2 mb-8 text-light text-center">
           Built by{" "}
           <a
-                          className="text-primary-500 hover:text-primary-400 transition duration-200"
+            className="text-primary-500 hover:text-primary-400 transition duration-200"
             href="https://persius.org"
           >
             Persius.
@@ -741,9 +747,11 @@ export default function Home() {
                 </option>
               ))}
             </select>
+            
+            {/* CHANGE 2: Updated textarea to properly handle multiple paragraphs */}
             <textarea
               rows="9"
-              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
+              className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500 whitespace-pre-line text-left"
               placeholder="Enter a description of your coverage denial here..."
               maxLength="2000"
               value={input}
@@ -751,6 +759,7 @@ export default function Home() {
                 setInput(e.target.value);
                 classify(e.target.value);
               }}
+              style={{ whiteSpace: "pre-line" }}
             />
           </div>
         )}
