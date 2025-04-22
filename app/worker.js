@@ -25,31 +25,31 @@ function getDecision(predIndex) {
 self.addEventListener("message", async (event) => {
   if (modelSessionLoaded === false || tokenizerLoaded === false) {
     self.postMessage({ status: "initiate" });
-
     cachedTokenizer = await AutoTokenizer.from_pretrained("tokenizer");
     tokenizerLoaded = true;
-
     cachedModelSession = await loadModelSession();
     modelSessionLoaded = true;
-
     self.postMessage({ status: "ready" });
   }
-
   // Model inference
-  let { input_ids, attention_mask } = await cachedTokenizer(event.data.text);
+  let { input_ids, attention_mask } = await cachedTokenizer(event.data.text, {padding: true, truncation: true});
+  
+  const jurisdiction_id = event.data.jurisdiction_id !== undefined ? event.data.jurisdiction_id : 2;
+  const insurance_type_id = event.data.insurance_type_id !== undefined ? event.data.insurance_type_id : 2;
+  
   let [outputProbs, time] = await runInference(
     cachedModelSession,
     input_ids,
-    attention_mask
+    attention_mask,
+    jurisdiction_id,
+    insurance_type_id
   );
-
   // Get prediction
   const inferenceTime = time;
   const overturnLikelihood = outputProbs[2];
   const maxProb = Math.max(outputProbs[0], outputProbs[1], outputProbs[2]);
   const argmax = outputProbs.indexOf(maxProb);
   const decision = getDecision(argmax);
-
   // Send the output back to the main thread
   self.postMessage({
     status: "complete",
