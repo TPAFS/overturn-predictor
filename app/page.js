@@ -29,14 +29,14 @@ It migrated to his abdomen, was periumbilical in location, rate 6/10, and descri
 
 Admit orders included round-the-clock Toradol, maintenance IV fluids, Tylenol as needed for moderate pain, Dilaudid as needed for severe pain, ranitidine for GI (gastrointestinal) protection, folic acid, albuterol for his dry cough, and Hematology consultation. 
 
-The patient's pain was severe overnight, requiring Dilaudid in the morning. He was transfused as per his transfusion program. By the day of discharge, his pain had improved, and he had no tenderness on exam. He was deemed stable for discharge home, to follow-up with Hematology in one to two weeks and pediatrician in one to two days. The insurer denied the inpatient stay claiming it was not medically necessary, and care could have been provided at a lower level.`
+The patient's pain was severe overnight, requiring Dilaudid in the morning. He was transfused as per his transfusion program. By the day of discharge, his pain had improved, and he had no tenderness on exam. He was deemed stable for discharge home, to follow-up with Hematology in one to two weeks and pediatrician in one to two days. The insurer denied the inpatient stay claiming it was not medically necessary, and care could have been provided at a lower level.`,
   },
   {
     title: "Breast Cancer Screening",
     summary:
       "This is a patient who was denied breast tomosynthesis to screen for breast cancer.",
   },
-    {
+  {
     title: "ER Visit for Chest Pain",
     summary:
       "I have coronary artery disease, and was experiencing persistent chest pain for a week. I was sent to the ER by my cardiologist. While there I had a cardiac catheterization with coronary angiography showing severe left anterior descending coronary artery disease. I had a successful coronary intervention, and was admitted as an inpatient, then discharged later that day. My insurer denied the inpatient admission claiming it was not medically necessary.",
@@ -56,7 +56,7 @@ The patient's pain was severe overnight, requiring Dilaudid in the morning. He w
     summary:
       "The patient is a 10-year-old female with a history of Pitt-Hopkins syndrome and associated motor planning difficulties, possible weakness in the oral area, and receptive and expressive language delays. The provider has recommended that the patient continue to receive individual speech and language therapy sessions twice a week for 60-minute sessions. The Health Insurer has denied the requested services as not medically necessary for treatment of the patient's medical condition.",
   },
-    {
+  {
     title: "Non-small cell Lung Cancer Diagnostics",
     summary:
       "This is a male patient with a medical history of advanced metastatic non-small cell lung cancer (NSCLC) with metastatic disease. FoundationOne CDx Lab test was ordered by the patient's treating physician because the test results were needed to help determine the course of treatment for the patient's advanced cancer. ",
@@ -65,7 +65,7 @@ The patient's pain was severe overnight, requiring Dilaudid in the morning. He w
     title: "ABA for Autism",
     summary:
       "The patient is a nine-year-old female with a history of autism spectrum disorder and a speech delay. The patient's parent has requested reimbursement for the ABA services provided over the course of a year. The Health Insurer has denied the services at issue as not medically necessary for the treatment of the patient.",
-  }
+  },
 ];
 
 const FAQ = () => {
@@ -259,13 +259,13 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
-  
+
   // State for storing user responses
   const [userResponses, setUserResponses] = useState({
     hasDenial: null,
     isUrgent: null,
     insuranceType: null,
-    state: null
+    state: null,
   });
 
   const introFlow = [
@@ -293,8 +293,8 @@ export default function Home() {
         No: "message1",
       },
       stateUpdate: (value) => ({
-        hasDenial: value === "Yes"
-      })
+        hasDenial: value === "Yes",
+      }),
     },
     {
       id: "message1",
@@ -322,8 +322,8 @@ export default function Home() {
         No: "statement3",
       },
       stateUpdate: (value) => ({
-        isUrgent: value === "Yes"
-      })
+        isUrgent: value === "Yes",
+      }),
     },
     {
       id: "message2",
@@ -344,7 +344,9 @@ export default function Home() {
         "You can use our tool to help estimate the likelihood that your denial would be overturned, were you to appeal it. Our general advice is to appeal if you have the time and resources, as appeals are often overturned.",
         "If you are considering forgoing an appeal because you believe it is unlikely to be successful, use our model to update that belief.",
       ],
-      responses: [{ answer: "Ok, Proceed", next: "insurance_type", primary: true }],
+      responses: [
+        { answer: "Ok, Proceed", next: "insurance_type", primary: true },
+      ],
     },
     {
       id: "insurance_type",
@@ -359,18 +361,18 @@ export default function Home() {
         "Employer Sponsored (self funded)",
         "Marketplace",
         "CHIP",
-        "Other"
+        "Other",
       ],
       responses: [
         { answer: "Back", next: "urgent_question", secondary: true },
         { answer: "Continue", next: "questionsComplete", primary: true },
       ],
       optionActions: {
-        "Marketplace": "marketplace_state",
+        Marketplace: "marketplace_state",
       },
       stateUpdate: (value) => ({
-        insuranceType: value
-      })
+        insuranceType: value,
+      }),
     },
     {
       id: "marketplace_state",
@@ -378,23 +380,66 @@ export default function Home() {
       stepNumber: 4,
       text: ["In which state did you purchase your Marketplace insurance?"],
       options: [
-        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", 
-        "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", 
-        "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", 
-        "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", 
-        "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", 
-        "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", 
-        "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", 
-        "Wisconsin", "Wyoming", "District of Columbia"
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+        "District of Columbia",
       ],
       responses: [
         { answer: "Back", next: "insurance_type", secondary: true },
         { answer: "Continue", next: "questionsComplete", primary: true },
       ],
       stateUpdate: (value) => ({
-        state: value
-      })
-    }
+        state: value,
+      }),
+    },
   ];
 
   // Create a reference to the worker object.
@@ -432,11 +477,51 @@ export default function Home() {
       worker.current.removeEventListener("message", onMessageReceived);
   });
 
-  const classify = useCallback((text) => {
-    if (worker.current) {
-      worker.current.postMessage({ text });
+  // Function to determine insurance type and jurisdiction IDs
+  const getTypeAndJurisdictionIds = () => {
+    // Determine insurance_type_id
+    let insurance_type_id = 2; // Default for other/null cases
+
+    if (userResponses.insuranceType) {
+      const commercialTypes = [
+        "Employer Sponsored (fully insured)",
+        "Employer Sponsored (self funded)",
+        "Marketplace",
+      ];
+
+      if (commercialTypes.includes(userResponses.insuranceType)) {
+        insurance_type_id = 0; // Commercial types
+      } else if (userResponses.insuranceType === "Medicaid") {
+        insurance_type_id = 1; // Medicaid
+      }
     }
-  }, []);
+
+    // Determine jurisdiction_id
+    let jurisdiction_id = 2; // Default for other states
+
+    if (userResponses.state === "New York") {
+      jurisdiction_id = 0;
+    } else if (userResponses.state === "California") {
+      jurisdiction_id = 1;
+    }
+
+    return { insurance_type_id, jurisdiction_id };
+  };
+
+  const classify = useCallback(
+    (text) => {
+      if (worker.current) {
+        const { jurisdiction_id, insurance_type_id } =
+          getTypeAndJurisdictionIds();
+        worker.current.postMessage({
+          text,
+          jurisdiction_id,
+          insurance_type_id,
+        });
+      }
+    },
+    [userResponses]
+  );
 
   const [introState, setIntroState] = useState("initial");
 
@@ -444,24 +529,24 @@ export default function Home() {
 
   const handleOptionSelect = (option) => {
     const currentStep = introFlow.find((step) => step.id === introState);
-    
+
     // Update user responses state if stateUpdate function exists
     if (currentStep.stateUpdate) {
-      setUserResponses(prev => ({
+      setUserResponses((prev) => ({
         ...prev,
-        ...currentStep.stateUpdate(option)
+        ...currentStep.stateUpdate(option),
       }));
     }
-    
+
     // Determine next state
-    const nextState = currentStep.optionActions?.[option] || 
-                      currentStep.responses.find((r) => r.primary)?.next;
-    
+    const nextState =
+      currentStep.optionActions?.[option] ||
+      currentStep.responses.find((r) => r.primary)?.next;
+
     if (nextState) {
       setIntroState(nextState);
     }
   };
-
 
   const renderIntroFlowContent = () => {
     if (!currentStep) return null;
@@ -520,7 +605,10 @@ export default function Home() {
           <>
             <div className="mb-6">
               {currentStep.text.map((statement, idx) => (
-                <p key={idx} className="text-slate-400 mb-4 text-left leading-relaxed px-2">
+                <p
+                  key={idx}
+                  className="text-slate-400 mb-4 text-left leading-relaxed px-2"
+                >
                   {statement}
                 </p>
               ))}
@@ -610,7 +698,9 @@ export default function Home() {
                 className="w-full p-4 bg-gray-700 text-gray-200 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
                 onChange={(e) => handleOptionSelect(e.target.value)}
               >
-                <option value="" disabled>Select a state</option>
+                <option value="" disabled>
+                  Select a state
+                </option>
                 {currentStep.options.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -693,15 +783,17 @@ export default function Home() {
             {/* Display user responses summary */}
             <div className="w-[85vw] max-w-lg mb-6 p-4 bg-gray-800 rounded-lg text-gray-200 text-left border border-gray-700 shadow-sm">
               <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-700">
-                <h3 className="text-sm font-medium text-gray-200">Your Information</h3>
-                <button 
+                <h3 className="text-sm font-medium text-gray-200">
+                  Your Information
+                </h3>
+                <button
                   onClick={() => {
                     setIntroState("initial");
                     setUserResponses({
                       hasDenial: null,
                       isUrgent: null,
                       insuranceType: null,
-                      state: null
+                      state: null,
                     });
                     setInput("");
                     if (result !== null) {
@@ -714,15 +806,27 @@ export default function Home() {
                 </button>
               </div>
               <ul className="list-none text-sm space-y-1.5">
-                <li><span className="text-slate-400">Coverage Denied:</span> {userResponses.hasDenial ? "Yes" : "No"}</li>
-                <li><span className="text-slate-400">Urgent Situation:</span> {userResponses.isUrgent ? "Yes" : "No"}</li>
-                <li><span className="text-slate-400">Insurance Type:</span> {userResponses.insuranceType || "Not specified"}</li>
+                <li>
+                  <span className="text-slate-400">Coverage Denied:</span>{" "}
+                  {userResponses.hasDenial ? "Yes" : "No"}
+                </li>
+                <li>
+                  <span className="text-slate-400">Urgent Situation:</span>{" "}
+                  {userResponses.isUrgent ? "Yes" : "No"}
+                </li>
+                <li>
+                  <span className="text-slate-400">Insurance Type:</span>{" "}
+                  {userResponses.insuranceType || "Not specified"}
+                </li>
                 {userResponses.insuranceType === "Marketplace" && (
-                  <li><span className="text-slate-400">State:</span> {userResponses.state || "Not specified"}</li>
+                  <li>
+                    <span className="text-slate-400">State:</span>{" "}
+                    {userResponses.state || "Not specified"}
+                  </li>
                 )}
               </ul>
             </div>
-            
+
             <select
               className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500"
               defaultValue="default"
@@ -743,7 +847,7 @@ export default function Home() {
                 </option>
               ))}
             </select>
-            
+
             {/* CHANGE 2: Updated textarea to properly handle multiple paragraphs */}
             <textarea
               rows="9"
