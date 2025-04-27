@@ -903,7 +903,7 @@ export default function Home() {
                   return JSON.stringify(
                     {
                       decision: result["decision"],
-                      confidence: `${Math.round(result["max_prob"] * 100, 2)}%`,
+                      probability: `${Math.round(result["max_prob"] * 100, 2)}%`,
                     },
                     null,
                     2
