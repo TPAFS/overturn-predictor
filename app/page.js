@@ -881,7 +881,8 @@ export default function Home() {
                       Downloading model, please wait.
                     </p>
                     <p className="text-sm sm:text-base">
-                      This should take at most 10 seconds.
+                      This is a ~50MB download, so should take at most 10
+                      seconds on a good connection.
                     </p>
                     <div className="flex justify-center">
                       <div className="lds-hourglass"></div>
@@ -903,7 +904,10 @@ export default function Home() {
                   return JSON.stringify(
                     {
                       decision: result["decision"],
-                      probability: `${Math.round(result["max_prob"] * 100, 2)}%`,
+                      probability: `${Math.round(
+                        result["max_prob"] * 100,
+                        2
+                      )}%`,
                     },
                     null,
                     2
