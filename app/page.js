@@ -881,8 +881,7 @@ export default function Home() {
                       Downloading model, please wait.
                     </p>
                     <p className="text-sm sm:text-base">
-                      This is a ~50MB download, so should take at most 10
-                      seconds on a good connection.
+                      This should take a few seconds.
                     </p>
                     <div className="flex justify-center">
                       <div className="lds-hourglass"></div>
