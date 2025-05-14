@@ -1,5 +1,9 @@
 import { AutoTokenizer, env } from "@xenova/transformers";
-import { loadModelSession, runInference } from "./utils/model";
+import {
+  loadModelSession,
+  createModelSession,
+  runInference,
+} from "./utils/model";
 
 // Skip local model check
 env.allowLocalModels = true;
@@ -25,40 +29,47 @@ function getDecision(predIndex) {
 async function loadModelSessionWithProgress() {
   try {
     const modelUrl = "/three_class_models/quant-model.onnx";
-
     // Fetch with progress tracking
     const response = await fetch(modelUrl);
-
     // Get content length if available from headers
     const contentLength = response.headers.get("content-length");
-
     if (contentLength) {
       const totalBytes = parseInt(contentLength);
-
       // Create a reader from the response body
       const reader = response.body.getReader();
-
       // Create an array to store chunks
       const chunks = [];
       let receivedBytes = 0;
+      let lastReportedProgress = -1;
 
       // Read the stream
       while (true) {
         const { done, value } = await reader.read();
-
         if (done) {
           break;
         }
-
         chunks.push(value);
         receivedBytes += value.length;
 
-        // Report progress
+        // Calculate current progress
         const currentProgress = Math.min(
           Math.round((receivedBytes / totalBytes) * 100),
           100
         );
-        self.postMessage({ status: "loading", progress: currentProgress });
+
+        // Only report progress if it's changed by at least 10%
+        if (
+          currentProgress - lastReportedProgress >= 10 ||
+          currentProgress === 100
+        ) {
+          self.postMessage({ status: "loading", progress: currentProgress });
+          lastReportedProgress = currentProgress;
+        }
+      }
+
+      // Make sure to send the final 100% progress
+      if (lastReportedProgress < 100) {
+        self.postMessage({ status: "loading", progress: 100 });
       }
 
       // Combine all chunks into a single Uint8Array
@@ -70,13 +81,12 @@ async function loadModelSessionWithProgress() {
       }
 
       // Use the original loadModelSession but pass the downloaded bytes
-      // instead of fetching again
-      const session = await loadModelSession(allChunks);
+      const session = await createModelSession(allChunks);
+      // Only report ready after session is fully created
       return session;
     } else {
       // If content-length is not available, signal indeterminate progress
       self.postMessage({ status: "loading", progress: -1 });
-
       // Fall back to the original implementation
       const session = await loadModelSession();
       return session;

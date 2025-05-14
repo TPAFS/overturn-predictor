@@ -4,7 +4,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 import { GradientText } from "./components/GradientText";
 import { Title } from "./components/Title";
-import ModelLoader from "./components/ModelLoader";
 
 function getColorFromDecision(result) {
   if (result["decision"] === "Overturned") {
@@ -448,7 +447,7 @@ export default function Home() {
   // Create a reference to the worker object.
   const worker = useRef(null);
 
-  // We use the `useEffect` hook to set up the worker as soon as the `App` component is mounted.
+  // Set up the worker as soon as the `App` component is mounted.
   useEffect(() => {
     if (!worker.current) {
       // Create the worker if it does not yet exist.
@@ -538,12 +537,14 @@ export default function Home() {
       // Use strict comparison to ensure we only show loading when download is triggered
       if (loadingTokenizer) {
         return (
-          <div className="mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-2 w-[85vw] max-w-lg">
-            <div className="text-center text-slate-400 mb-2">
-              Loading tokenizer...
-            </div>
-            <div className="flex justify-center">
-              <div className="lds-hourglass"></div>
+          <div className="mx-2 mt-4 w-[85vw] max-w-lg">
+            {/* Use modified ModelLoader component with the spinner inside */}
+            <div className="w-full max-w-lg mx-auto bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-2">
+              <div className="mb-2 flex justify-between items-center">
+                <span className="text-slate-400 text-sm">
+                  Loading tokenizer...
+                </span>
+              </div>
             </div>
           </div>
         );
@@ -965,6 +966,7 @@ export default function Home() {
 
         {/* Show results only when ready*/}
         {ready === true &&
+          result &&
           introState === "questionsComplete" &&
           input.length >= 5 && (
             <pre
