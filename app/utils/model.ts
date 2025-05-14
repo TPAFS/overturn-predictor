@@ -1,17 +1,41 @@
 import * as ort from "onnxruntime-web";
 
+// This function creates the session from already downloaded model bytes
+// It doesn't handle the downloading - that's in the worker
+export async function createModelSession(modelBytes) {
+  const sessionOptions: ort.InferenceSession.SessionOptions = {
+    executionProviders: ["wasm"],
+    graphOptimizationLevel: "all",
+    enableCpuMemArena: true,
+    enableMemPattern: true,
+    executionMode: "sequential",
+  };
+
+  try {
+    const session = await ort.InferenceSession.create(
+      modelBytes,
+      sessionOptions
+    );
+    console.log("Model session created successfully");
+    return session;
+  } catch (e) {
+    console.error("Failed to create model session:", e);
+    throw e;
+  }
+}
+
+// Keep your original loadModelSession function for compatibility
 export async function loadModelSession() {
   const sessionOptions: ort.InferenceSession.SessionOptions = {
     executionProviders: ["wasm"],
     graphOptimizationLevel: "all",
     enableCpuMemArena: true,
     enableMemPattern: true,
-    executionMode: "sequential"
+    executionMode: "sequential",
   };
-  
+
   try {
-    // console.log("Loading model with options:", sessionOptions);
-    const modelUrl = "/three_class_models/quant-model.onnx"
+    const modelUrl = "/three_class_models/quant-model.onnx";
     const response = await fetch(modelUrl);
     const arrayBuffer = await response.arrayBuffer();
     const modelBytes = new Uint8Array(arrayBuffer);
@@ -19,10 +43,10 @@ export async function loadModelSession() {
       modelBytes,
       sessionOptions
     );
-    console.log("Model loaded successfully");
+    // console.log("Model loaded successfully");
     return session;
   } catch (e) {
-    console.error("Failed to load model:", e);
+    // console.error("Failed to load model:", e);
     throw e;
   }
 }
@@ -39,13 +63,13 @@ export async function runInference(
     input_ids: input_ids,
     attention_mask: attention_mask,
     jurisdiction_id: new ort.Tensor(
-      "int64", 
-      new BigInt64Array([BigInt(jurisdiction_id)]), 
+      "int64",
+      new BigInt64Array([BigInt(jurisdiction_id)]),
       [1]
     ),
     insurance_type_id: new ort.Tensor(
-      "int64", 
-      new BigInt64Array([BigInt(insurance_type_id)]), 
+      "int64",
+      new BigInt64Array([BigInt(insurance_type_id)]),
       [1]
     ),
   };
@@ -57,8 +81,6 @@ export async function runInference(
   var outputSoftmax = softmax(Array.prototype.slice.call(output.data));
   return [outputSoftmax, inferenceTime];
 }
-
-
 
 // The softmax transforms values to be between 0 and 1
 function softmax(resultArray: number[]): any {
