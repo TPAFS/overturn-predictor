@@ -2,7 +2,7 @@ import * as ort from "onnxruntime-web";
 
 // This function creates the session from already downloaded model bytes
 // It doesn't handle the downloading - that's in the worker
-export async function createModelSession(modelBytes) {
+export async function createModelSession(modelBytes: Uint8Array) {
   const sessionOptions: ort.InferenceSession.SessionOptions = {
     executionProviders: ["wasm"],
     graphOptimizationLevel: "all",
