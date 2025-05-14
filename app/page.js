@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 import { GradientText } from "./components/GradientText";
 import { Title } from "./components/Title";
+import ModelLoader from "./components/ModelLoader";
 
 function getColorFromDecision(result) {
   if (result["decision"] === "Overturned") {
@@ -15,7 +16,6 @@ function getColorFromDecision(result) {
   }
 }
 
-// Updated sampleSummaries to include paragraphs with newlines
 const sampleSummaries = [
   {
     title: "Stomach Cancer Chemotherapy",
@@ -259,6 +259,9 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [ready, setReady] = useState(null);
   const [input, setInput] = useState("");
+  const [modelProgress, setModelProgress] = useState(0);
+  const [isIndeterminate, setIsIndeterminate] = useState(false);
+  const [loadingTokenizer, setLoadingTokenizer] = useState(false);
 
   // State for storing user responses
   const [userResponses, setUserResponses] = useState({
@@ -459,12 +462,32 @@ export default function Home() {
       switch (e.data.status) {
         case "initiate":
           setReady(false);
+          setModelProgress(0);
+          setIsIndeterminate(false);
+          setLoadingTokenizer(true);
+          break;
+        case "tokenizer_loaded":
+          setLoadingTokenizer(false);
+          break;
+        case "loading":
+          if (e.data.progress === -1) {
+            // Handle indeterminate progress
+            setIsIndeterminate(true);
+          } else {
+            setModelProgress(e.data.progress);
+            setIsIndeterminate(false);
+          }
           break;
         case "ready":
           setReady(true);
           break;
         case "complete":
           setResult(e.data.output);
+          break;
+        case "error":
+          console.error("Model error:", e.data.message);
+          alert(`Error loading model: ${e.data.message}`);
+          setReady(null);
           break;
       }
     };
@@ -506,6 +529,80 @@ export default function Home() {
     }
 
     return { insurance_type_id, jurisdiction_id };
+  };
+
+  const renderLoadingState = () => {
+    // Only show loading state if we're actually in a loading state
+    // (ready is false AND we've triggered a download or classification)
+    if (ready === false) {
+      // Use strict comparison to ensure we only show loading when download is triggered
+      if (loadingTokenizer) {
+        return (
+          <div className="mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-2 w-[85vw] max-w-lg">
+            <div className="text-center text-slate-400 mb-2">
+              Loading tokenizer...
+            </div>
+            <div className="flex justify-center">
+              <div className="lds-hourglass"></div>
+            </div>
+          </div>
+        );
+      } else {
+        // Always use the progress bar UI, even if progress is 0
+        // This prevents the momentary flicker of the large spinner
+        return (
+          <div className="mx-2 mt-4 w-[85vw] max-w-lg">
+            {/* Use modified ModelLoader component with the spinner inside */}
+            <div className="w-full max-w-lg mx-auto bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-2">
+              <div className="mb-2 flex justify-between items-center">
+                <span className="text-slate-400 text-sm">
+                  Downloading model...
+                </span>
+
+                {/* Group the spinner and percentage together */}
+                <div className="flex items-center">
+                  {modelProgress > 0 && !isIndeterminate && (
+                    <span className="text-slate-400 text-sm mr-2">
+                      {modelProgress}%
+                    </span>
+                  )}
+                  <div className="lds-hourglass-small"></div>
+                </div>
+              </div>
+
+              {isIndeterminate ? (
+                // Indeterminate progress bar (animated)
+                <div className="w-full bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                  <div
+                    className="bg-blue-500 h-2.5 rounded-full indeterminate-progress-bar"
+                    style={{
+                      animation:
+                        "indeterminateAnimation 1.5s infinite ease-in-out",
+                      background:
+                        "linear-gradient(90deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 1) 50%, rgba(59, 130, 246, 0) 100%)",
+                      backgroundSize: "200% 100%",
+                    }}
+                  />
+                </div>
+              ) : (
+                // Determinate progress bar
+                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                  <div
+                    className="bg-blue-500 h-2.5 rounded-full transition-all duration-300 ease-in-out"
+                    style={{ width: `${modelProgress}%` }}
+                  />
+                </div>
+              )}
+
+              <p className="text-xs text-slate-500 mt-2">
+                This may take a few moments depending on your connection speed
+              </p>
+            </div>
+          </div>
+        );
+      }
+    }
+    return null;
   };
 
   const classify = useCallback(
@@ -570,7 +667,7 @@ export default function Home() {
           </>
         )}
 
-        {/* Message or info screens - UPDATED STYLING */}
+        {/* Message or info screens */}
         {(currentStep.id === "message1" || currentStep.id === "message2") && (
           <>
             <div className="mb-6">
@@ -600,7 +697,7 @@ export default function Home() {
           </>
         )}
 
-        {/* Statement screen - UPDATED STYLING */}
+        {/* Statement screen */}
         {currentStep.id === "statement3" && (
           <>
             <div className="mb-6">
@@ -848,7 +945,6 @@ export default function Home() {
               ))}
             </select>
 
-            {/* CHANGE 2: Updated textarea to properly handle multiple paragraphs */}
             <textarea
               rows="9"
               className="m-2 w-[85vw] p-4 max-w-lg bg-gray-700 border border-gray-600 text-gray-200 rounded mb-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:border-blue-500 whitespace-pre-line text-left"
@@ -864,58 +960,53 @@ export default function Home() {
           </div>
         )}
 
-        {ready !== null && introState === "questionsComplete" && (
-          <pre
-            className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono whitespace-normal md:whitespace-pre break-words max-w-full ${
-              result !== null ? getColorFromDecision(result) : ""
-            }`}
-          >
-            {(() => {
-              if (!ready || !result) {
-                if (introState === "initial" || input.length < 5) {
-                  return "Enter a case description.";
-                }
-                return (
-                  <div className="loading-container">
-                    <p className="text-sm sm:text-base">
-                      Downloading model, please wait.
-                    </p>
-                    <p className="text-sm sm:text-base">
-                      This should take a few seconds.
-                    </p>
-                    <div className="flex justify-center">
-                      <div className="lds-hourglass"></div>
-                    </div>
-                  </div>
-                );
-              } else if (input.length < 5) {
-                return "Enter a case description.";
-              } else if (result["decision"] === "Insufficient Information") {
-                return "Insufficient Information For Model";
-              } else {
-                // On mobile, format differently for better readability
-                const isMobile = window.innerWidth < 768;
-                if (isMobile) {
-                  return `Decision: ${
-                    result["decision"]
-                  }\nConfidence: ${Math.round(result["max_prob"] * 100, 2)}%`;
+        {/* Show loading state */}
+        {renderLoadingState()}
+
+        {/* Show results only when ready*/}
+        {ready === true &&
+          introState === "questionsComplete" &&
+          input.length >= 5 && (
+            <pre
+              className={`mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono whitespace-normal md:whitespace-pre break-words max-w-full ${
+                result !== null ? getColorFromDecision(result) : ""
+              }`}
+            >
+              {(() => {
+                if (result["decision"] === "Insufficient Information") {
+                  return "Insufficient Information For Model";
                 } else {
-                  return JSON.stringify(
-                    {
-                      decision: result["decision"],
-                      probability: `${Math.round(
-                        result["max_prob"] * 100,
-                        2
-                      )}%`,
-                    },
-                    null,
-                    2
-                  );
+                  // On mobile, format differently for better readability
+                  const isMobile = window.innerWidth < 768;
+                  if (isMobile) {
+                    return `Decision: ${
+                      result["decision"]
+                    }\nConfidence: ${Math.round(result["max_prob"] * 100, 2)}%`;
+                  } else {
+                    return JSON.stringify(
+                      {
+                        decision: result["decision"],
+                        probability: `${Math.round(
+                          result["max_prob"] * 100,
+                          2
+                        )}%`,
+                      },
+                      null,
+                      2
+                    );
+                  }
                 }
-              }
-            })()}
-          </pre>
-        )}
+              })()}
+            </pre>
+          )}
+
+        {ready === true &&
+          introState === "questionsComplete" &&
+          input.length < 5 && (
+            <pre className="mx-2 mt-4 bg-gray-800 text-white-100 p-4 border-gray-900 rounded border-8 font-mono whitespace-normal md:whitespace-pre break-words max-w-full">
+              Enter a case description.
+            </pre>
+          )}
         <FAQ />
         <p className="wrap mx-4 max-w-xl text-xs mt-12 mb-8 text-slate-400 text-center">
           <b>Disclaimer: </b>This is an informational self-help tool. Its
